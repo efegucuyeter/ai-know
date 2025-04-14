@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Testler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: url('görsel/main.png') no-repeat center center / cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .main-content {
+            flex: 1;
+            padding-bottom: 100px;
+        }
+        .navbar-custom, footer {
+            background-color: #3674B5 !important;
+        }
+        .page-title {
+            color: white;
+            text-align: center;
+            margin: 40px 0;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .section-title {
+            color: white;
+            margin: 30px 0 20px 0;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            padding-left: 10px;
+            border-left: 5px solid #3674B5;
+        }
+        .category-card {
+            background: rgba(0, 51, 102, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .category-image {
+            height: 180px;
+            overflow: hidden;
+        }
+        .category-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .category-content {
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .category-info {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        .quiz-card {
+            background: rgba(0, 51, 102, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            cursor: pointer;
+        }
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .quiz-image {
+            height: 140px;
+            overflow: hidden;
+            position: relative;
+        }
+        .quiz-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .quiz-content {
+            padding: 15px;
+            color: white;
+        }
+        .quiz-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            line-height: 1.3;
+            height: 2.8rem;
+            overflow: hidden;
+        }
+        .quiz-info {
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .quiz-creator {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #e0e0e0;
+        }
+        .creator-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .btn-test {
+            background-color: white;
+            color: #3674B5;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        .btn-test:hover {
+            background-color: #2c5d95;
+            color: white;
+        }
+        .difficulty {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #3674B5;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+        .category-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #3674B5;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        .question-count {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+        footer {
+            color: white;
+            padding: 20px 0;
+            margin-top: auto;
+            width: 100%;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .footer-box {
+            background-color: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+        .footer-box h5 {
+            color: #0f3762;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .footer-box p {
+            color: #ecf0f1;
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        .footer-links {
+            text-align: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .footer-links p {
+            margin-bottom: 5px;
+        }
+        .footer-links a {
+            color: #3674B5;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0 20px 0;
+        }
+        .section-header h3 {
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            padding-left: 10px;
+            border-left: 5px solid #3674B5;
+            margin: 0;
+        }
+        .view-all {
+            color: #3674B5;
+            background-color: white;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .view-all:hover {
+            background-color: #2c5d95;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="container">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mt-3 rounded">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">Ana Sayfa</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link active" href="#">Testler</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Liderlik Tablosu</a></li>
+                        </ul>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item"><a class="nav-link" href="#">Profil</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Çıkış Yap</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- Quiz Categories -->
+            <h2 class="page-title">Testler</h2>
+            
+            <div class="row g-4 mb-5">
+                <!-- Matematik -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="category-card position-relative">
+                        <div class="category-image">
+                            <img src="https://placehold.co/400x320" alt="Matematik">
+                        </div>
+                        <span class="category-badge">24 Test</span>
+                        <div class="category-content">
+                            <h3 class="category-title">Matematik</h3>
+                            <p class="category-info">Sayılar, geometri, cebir ve daha fazlası!</p>
+                            <button class="btn btn-test">TESTLERE BAŞLA</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sanat -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="category-card position-relative">
+                        <div class="category-image">
+                            <img src="https://placehold.co/400x320" alt="Sanat">
+                        </div>
+                        <span class="category-badge">18 Test</span>
+                        <div class="category-content">
+                            <h3 class="category-title">Sanat</h3>
+                            <p class="category-info">Resim, heykel, müzik ve sanat tarihi.</p>
+                            <button class="btn btn-test">TESTLERE BAŞLA</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bilim -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="category-card position-relative">
+                        <div class="category-image">
+                            <img src="https://placehold.co/400x320" alt="Bilim">
+                        </div>
+                        <span class="category-badge">32 Test</span>
+                        <div class="category-content">
+                            <h3 class="category-title">Bilim</h3>
+                            <p class="category-info">Fizik, kimya, biyoloji ve uzay keşfi.</p>
+                            <button class="btn btn-test">TESTLERE BAŞLA</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hayvanlar -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="category-card position-relative">
+                        <div class="category-image">
+                            <img src="https://placehold.co/400x320" alt="Hayvanlar">
+                        </div>
+                        <span class="category-badge">27 Test</span>
+                        <div class="category-content">
+                            <h3 class="category-title">Hayvanlar</h3>
+                            <p class="category-info">Vahşi yaşam, evcil hayvanlar ve ekosistemler.</p>
+                            <button class="btn btn-test">TESTLERE BAŞLA</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Popüler Testler -->
+            <div class="section-header">
+                <h3>Popüler Testler</h3>
+                <a href="#" class="view-all">Tümünü Gör</a>
+            </div>
+            <div class="row g-4 mb-5">
+                <!-- Test 1 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="quiz-card">
+                        <div class="quiz-image">
+                            <img src="https://placehold.co/400x320" alt="Geometri Testi">
+                            <span class="difficulty">Orta</span>
+                            <span class="question-count">15 Soru</span>
+                        </div>
+                        <div class="quiz-content">
+                            <h4 class="quiz-title">Temel Geometri Konseptleri</h4>
+                            <div class="quiz-info">
+                                <span><i class="bi bi-star-fill text-warning"></i> 4.8</span>
+                                <span>1250 Çözüm</span>
+                            </div>
+                            <div class="quiz-creator">
+                                <img src="https://placehold.co/40x40" alt="Avatar" class="creator-avatar">
+                                <span>Ayşe Yılmaz</span>
+                            </div>
+                            <button class="btn btn-test mt-3">TESTİ ÇÖZ</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Test 2 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="quiz-card">
+                        <div class="quiz-image">
+                            <img src="https://placehold.co/400x320" alt="Sanat Testi">
+                            <span class="difficulty">Kolay</span>
+                            <span class="question-count">10 Soru</span>
+                        </div>
+                        <div class="quiz-content">
+                            <h4 class="quiz-title">Klasik Müzik Bestecileri</h4>
+                            <div class="quiz-info">
+                                <span><i class="bi bi-star-fill text-warning"></i> 4.9</span>
+                                <span>1125 Çözüm</span>
+                            </div>
+                            <div class="quiz-creator">
+                                <img src="https://placehold.co/40x40" alt="Avatar" class="creator-avatar">
+                                <span>Emre Aydın</span>
+                            </div>
+                            <button class="btn btn-test mt-3">TESTİ ÇÖZ</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Test 3 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="quiz-card">
+                        <div class="quiz-image">
+                            <img src="https://placehold.co/400x320" alt="Bilim Testi">
+                            <span class="difficulty">Zor</span>
+                            <span class="question-count">18 Soru</span>
+                        </div>
+                        <div class="quiz-content">
+                            <h4 class="quiz-title">Modern Fizik Teorileri</h4>
+                            <div class="quiz-info">
+                                <span><i class="bi bi-star-fill text-warning"></i> 4.6</span>
+                                <span>721 Çözüm</span>
+                            </div>
+                            <div class="quiz-creator">
+                                <img src="https://placehold.co/40x40" alt="Avatar" class="creator-avatar">
+                                <span>Kemal Yıldız</span>
+                            </div>
+                            <button class="btn btn-test mt-3">TESTİ ÇÖZ</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Test 4 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="quiz-card">
+                        <div class="quiz-image">
+                            <img src="https://placehold.co/400x320" alt="Hayvanlar Testi">
+                            <span class="difficulty">Kolay</span>
+                            <span class="question-count">10 Soru</span>
+                        </div>
+                        <div class="quiz-content">
+                            <h4 class="quiz-title">Memeli Hayvanlar Dünyası</h4>
+                            <div class="quiz-info">
+                                <span><i class="bi bi-star-fill text-warning"></i> 4.8</span>
+                                <span>1387 Çözüm</span>
+                            </div>
+                            <div class="quiz-creator">
+                                <img src="https://placehold.co/40x40" alt="Avatar" class="creator-avatar">
+                                <span>Gizem Arslan</span>
+                            </div>
+                            <button class="btn btn-test mt-3">TESTİ ÇÖZ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Yeni Eklenen Testler -->
+            <div class="section-header">
+                <h3>Yeni Eklenen Testler</h3>
+                <a href="#" class="view-all">Tümünü Gör</a>
+            </div>
+            <div class="row g-4 mb-5">
+                <!-- Test 1 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="quiz-card">
+                        <div class="quiz-image">
+                            <img src="https://placehold.co/400x320" alt="Cebir Testi">
+                            <span class="difficulty">Zor</span>
+                            <span class="question-count">20 Soru</span>
+                        </div>
+                        <div class="quiz-content">
+                            <h4 class="quiz-title">İleri Cebir Problemleri</h4>
+                            <div class="quiz-info">
+                                <span><i class="bi bi-star-fill text-warning"></i> 4.5</span>
+                                <span>845 Çözüm</span>
+                            </div>
+                            <div class="quiz-creator">
+                                <img src="https://placehold.co/40x40" alt="Avatar" class="creator-avatar">
+                                <span>Mehmet Demir</span>
+                            </div>
+                            <button class="btn btn-test mt-3">TESTİ ÇÖZ</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Test 2 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="quiz-card">
+                        <div class="quiz-image">
+                            <img src="https://placehold.co/400x320" alt="Kimya Testi">
+                            <span class="difficulty">Orta</span>
+                            <span class="question-count">15 Soru</span>
+                        </div>
+                        <div class="quiz-content">
+                            <h4 class="quiz-title">Organik Kimya Temelleri</h4>
+                            <div class="quiz-info">
+                                <span><i class="bi bi-star-fill text-warning"></i> 4.7</span>
+                                <span>892 Çözüm</span>
+                            </div>
+                            <div class="quiz-creator">
+                                <img src="https://placehold.co/40x40" alt="Avatar" class="creator-avatar">
+                                <span>Selin Aksoy</span>
+                            </div>
+                            <button class="btn btn-test mt-3">TESTİ ÇÖZ</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Test 3 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="quiz-card">
+                        <div class="quiz-image">
+                            <img src="https://placehold.co/400x320" alt="Sanat Testi">
+                            <span class="difficulty">Zor</span>
+                            <span class="question-count">16 Soru</span>
+                        </div>
+                        <div class="quiz-content">
+                            <h4 class="quiz-title">Antik Dönem Heykelleri</h4>
+                            <div class="quiz-info">
+                                <span><i class="bi bi-star-fill text-warning"></i> 4.7</span>
+                                <span>567 Çözüm</span>
+                            </div>
+                            <div class="quiz-creator">
+                                <img src="https://placehold.co/40x40" alt="Avatar" class="creator-avatar">
+                                <span>Özge Yıldırım</span>
+                            </div>
+                            <button class="btn btn-test mt-3">TESTİ ÇÖZ</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Test 4 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="quiz-card">
+                        <div class="quiz-image">
+                            <img src="https://placehold.co/400x320" alt="Deniz Canlıları Testi">
+                            <span class="difficulty">Orta</span>
+                            <span class="question-count">14 Soru</span>
+                        </div>
+                        <div class="quiz-content">
+                            <h4 class="quiz-title">Okyanus ve Deniz Yaşamı</h4>
+                            <div class="quiz-info">
+                                <span><i class="bi bi-star-fill text-warning"></i> 4.7</span>
+                                <span>975 Çözüm</span>
+                            </div>
+                            <div class="quiz-creator">
+                                <img src="https://placehold.co/40x40" alt="Avatar" class="creator-avatar">
+                                <span>Cem Yılmaz</span>
+                            </div>
+                            <button class="btn btn-test mt-3">TESTİ ÇÖZ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-box">
+                    <h5>Aktif Kullanıcılar</h5>
+                    <p>1920+ Kullanıcı</p>
+                </div>
+                <div class="footer-box">
+                    <h5>Testler</h5>
+                    <p>1500+ Test</p>
+                </div>
+                <div class="footer-box">
+                    <h5>Çözülen Testler</h5>
+                    <p>1400+ Test Çözüldü</p>
+                </div>
+                <div class="footer-box">
+                    <h5>Son Kayıtlı Üye</h5>
+                    <p>Ahmet Yılmaz (ahmet@mail.com)</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
