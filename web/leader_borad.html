@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Liderlik Tablosu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: url('görsel/main.png') no-repeat center center / cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .main-content {
+            flex: 1;
+            padding-bottom: 100px;
+        }
+        .navbar-custom, footer {
+            background-color: #3674B5 !important;
+        }
+        .page-title {
+            color: white;
+            text-align: center;
+            margin: 40px 0;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .leaderboard-container {
+            background: rgba(0, 51, 102, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 50px auto;
+            max-width: 900px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .leaderboard-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .leaderboard-filters {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .filter-select {
+            background-color: #4D8AD3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+        }
+        .filter-select option {
+            background-color: #4D8AD3;
+            color: white;
+        }
+        .table-container {
+            background-color: #4D8AD3;
+            border-radius: 10px;
+            padding: 5px;
+            overflow-x: auto;
+        }
+        .leaderboard-table {
+            width: 100%;
+            color: white;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .leaderboard-table th {
+            background-color: #2c5d95;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid white;
+        }
+        .leaderboard-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .leaderboard-table tbody tr:hover {
+            background-color: #336699;
+        }
+        .rank-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .rank-1 {
+            color: gold;
+            font-size: 1.5rem;
+        }
+        .rank-2 {
+            color: silver;
+            font-size: 1.4rem;
+        }
+        .rank-3 {
+            color: #cd7f32; /* bronze */
+            font-size: 1.3rem;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: left;
+            padding-left: 20px;
+        }
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .pagination-btn {
+            background-color: white;
+            color: #3674B5;
+            border: none;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .pagination-btn:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        .pagination-btn.active {
+            background-color: #2c5d95;
+            color: white;
+        }
+        footer {
+            color: white;
+            padding: 20px 0;
+            margin-top: auto;
+            width: 100%;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .footer-box {
+            background-color: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+        .footer-box h5 {
+            color: #0f3762;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .footer-box p {
+            color: #ecf0f1;
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        .footer-links {
+            text-align: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .footer-links p {
+            margin-bottom: 5px;
+        }
+        .footer-links a {
+            color: #3674B5;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        .badge-score {
+            background-color: #2c5d95;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .leaderboard-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                justify-content: space-between;
+            }
+            .leaderboard-table th, 
+            .leaderboard-table td {
+                padding: 10px 5px;
+                font-size: 0.9rem;
+            }
+            .user-avatar {
+                width: 30px;
+                height: 30px;
+            }
+            .user-profile {
+                padding-left: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="container">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mt-3 rounded">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="index.html">Ana Sayfa</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="quiz.html">Testler</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="#">Liderlik Tablosu</a></li>
+                        </ul>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Çıkış Yap</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- Leaderboard Container -->
+            <div class="leaderboard-container">
+                <div class="leaderboard-header">
+                    <div class="leaderboard-title">Liderlik Tablosu</div>
+                    <p>En yüksek puanları alan kullanıcıları görüntüleyin</p>
+                </div>
+                
+                <div class="leaderboard-filters">
+                    <div class="filter-group">
+                        <label for="test-type">Test Türü:</label>
+                        <select id="test-type" class="filter-select">
+                            <option value="all">Tüm Testler</option>
+                            <option value="math">Matematik</option>
+                            <option value="science">Fen Bilgisi</option>
+                            <option value="history">Tarih</option>
+                            <option value="language">Türkçe</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="time-period">Zaman Dilimi:</label>
+                        <select id="time-period" class="filter-select">
+                            <option value="all-time">Tüm Zamanlar</option>
+                            <option value="this-month">Bu Ay</option>
+                            <option value="this-week">Bu Hafta</option>
+                            <option value="today">Bugün</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <button class="pagination-btn" onclick="applyFilters()">Filtrele</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Sıra</th>
+                                <th>Kullanıcı</th>
+                                <th>Test Sayısı</th>
+                                <th>Doğru</th>
+                                <th>Yanlış</th>
+                                <th>Puan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="rank-number rank-1">1</span></td>
+                                <td>
+                                    <div class="user-profile">
+                                        <img src="/api/placeholder/40/40" class="user-avatar me-2" alt="User Avatar">
+                                        <span>Ahmet Yılmaz</span>
+                                    </div>
+                                </td>
+                                <td>245</td>
+                                <td>1,896</td>
+                                <td>287</td>
+                                <td><span class="badge-score">9,480</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-number rank-2">2</span></td>
+                                <td>
+                                    <div class="user-profile">
+                                        <img src="/api/placeholder/40/40" class="user-avatar me-2" alt="User Avatar">
+                                        <span>Ayşe Demir</span>
+                                    </div>
+                                </td>
+                                <td>211</td>
+                                <td>1,742</td>
+                                <td>345</td>
+                                <td><span class="badge-score">8,710</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-number rank-3">3</span></td>
+                                <td>
+                                    <div class="user-profile">
+                                        <img src="/api/placeholder/40/40" class="user-avatar me-2" alt="User Avatar">
+                                        <span>Mehmet Kaya</span>
+                                    </div>
+                                </td>
+                                <td>190</td>
+                                <td>1,604</td>
+                                <td>294</td>
+                                <td><span class="badge-score">8,020</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-number">4</span></td>
+                                <td>
+                                    <div class="user-profile">
+                                        <img src="/api/placeholder/40/40" class="user-avatar me-2" alt="User Avatar">
+                                        <span>Zeynep Şahin</span>
+                                    </div>
+                                </td>
+                                <td>184</td>
+                                <td>1,549</td>
+                                <td>271</td>
+                                <td><span class="badge-score">7,745</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-number">5</span></td>
+                                <td>
+                                    <div class="user-profile">
+                                        <img src="/api/placeholder/40/40" class="user-avatar me-2" alt="User Avatar">
+                                        <span>Ali Yıldız</span>
+                                    </div>
+                                </td>
+                                <td>172</td>
+                                <td>1,467</td>
+                                <td>302</td>
+                                <td><span class="badge-score">7,335</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-number">6</span></td>
+                                <td>
+                                    <div class="user-profile">
+                                        <img src="/api/placeholder/40/40" class="user-avatar me-2" alt="User Avatar">
+                                        <span>Fatma Öztürk</span>
+                                    </div>
+                                </td>
+                                <td>163</td>
+                                <td>1,391</td>
+                                <td>256</td>
+                                <td><span class="badge-score">6,955</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-number">7</span></td>
+                                <td>
+                                    <div class="user-profile">
+                                        <img src="/api/placeholder/40/40" class="user-avatar me-2" alt="User Avatar">
+                                        <span>Mustafa Aydın</span>
+                                    </div>
+                                </td>
+                                <td>155</td>
+                                <td>1,317</td>
+                                <td>232</td>
+                                <td><span class="badge-score">6,585</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-number">8</span></td>
+                                <td>
+                                    <div class="user-profile">
+                                        <img src="/api/placeholder/40/40" class="user-avatar me-2" alt="User Avatar">
+                                        <span>Ebru Korkmaz</span>
+                                    </div>
+                                </td>
+                                <td>148</td>
+                                <td>1,258</td>
+                                <td>218</td>
+                                <td><span class="badge-score">6,290</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-number">9</span></td>
+                                <td>
+                                    <div class="user-profile">
+                                        <img src="/api/placeholder/40/40" class="user-avatar me-2" alt="User Avatar">
+                                        <span>Hüseyin Çelik</span>
+                                    </div>
+                                </td>
+                                <td>139</td>
+                                <td>1,182</td>
+                                <td>198</td>
+                                <td><span class="badge-score">5,910</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-number">10</span></td>
+                                <td>
+                                    <div class="user-profile">
+                                        <img src="/api/placeholder/40/40" class="user-avatar me-2" alt="User Avatar">
+                                        <span>Elif Arslan</span>
+                                    </div>
+                                </td>
+                                <td>132</td>
+                                <td>1,122</td>
+                                <td>189</td>
+                                <td><span class="badge-score">5,610</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination-container">
+                    <button class="pagination-btn"><i class="bi bi-chevron-left"></i></button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">4</button>
+                    <button class="pagination-btn">5</button>
+                    <button class="pagination-btn"><i class="bi bi-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-box">
+                    <h5>Aktif Kullanıcılar</h5>
+                    <p>1920+ Kullanıcı</p>
+                </div>
+                <div class="footer-box">
+                    <h5>Testler</h5>
+                    <p>1500+ Test</p>
+                </div>
+                <div class="footer-box">
+                    <h5>Çözülen Testler</h5>
+                    <p>1400+ Test Çözüldü</p>
+                </div>
+                <div class="footer-box">
+                    <h5>Son Kayıtlı Üye</h5>
+                    <p>Ahmet Yılmaz (ahmet@mail.com)</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function applyFilters() {
+            const testType = document.getElementById('test-type').value;
+            const timePeriod = document.getElementById('time-period').value;
+            
+            // Here you would typically make an AJAX request to get filtered data
+            // For demonstration purposes, we'll just show an alert
+            alert(`Filtreler uygulanıyor: Test Türü = ${testType}, Zaman Dilimi = ${timePeriod}`);
+            
+            // In a real application, you would then update the table with new data
+            // fetchLeaderboardData(testType, timePeriod);
+        }
+        
+        // Example function to fetch leaderboard data (not implemented)
+        function fetchLeaderboardData(testType, timePeriod) {
+            // Make API call to get data
+            // Update table with new data
+        }
+    </script>
+</body>
+</html>
