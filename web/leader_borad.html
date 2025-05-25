@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
         body {
-            background: url('görsel/main.png') no-repeat center center / cover;
+            background: #578FCA;
+            background: radial-gradient(circle, rgba(87, 143, 202, 1) 53%, rgba(148, 187, 233, 1) 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -22,11 +23,10 @@
             background-color: #3674B5 !important;
         }
         .page-title {
-            color: white;
+            color: #2c5d95;
             text-align: center;
             margin: 40px 0;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         .leaderboard-container {
             background: rgba(0, 51, 102, 0.2);
@@ -248,7 +248,7 @@
                         </ul>
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#">Çıkış Yap</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="AuthAPI.logout()">Çıkış Yap</a></li>
                         </ul>
                     </div>
                 </div>
@@ -473,23 +473,107 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
     <script>
+        let leaderboardData = [];
+
+        // Sayfa yüklendiğinde liderlik tablosunu yükle
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await loadLeaderboard();
+                await loadStatistics();
+            } catch (error) {
+                console.error('Liderlik tablosu yükleme hatası:', error);
+                showAlert('Liderlik tablosu yüklenirken bir hata oluştu.', 'danger');
+            }
+        });
+
+        async function loadLeaderboard() {
+            try {
+                leaderboardData = await LeaderboardAPI.getLeaderboard(10);
+                renderLeaderboard();
+            } catch (error) {
+                console.error('Liderlik tablosu yüklenemedi:', error);
+            }
+        }
+
+        function renderLeaderboard() {
+            const tbody = document.querySelector('table tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            leaderboardData.forEach((entry, index) => {
+                const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                const row = `
+                    <tr>
+                        <td><span class="rank-number ${rankClass}">${entry.rank}</span></td>
+                        <td>
+                            <div class="user-profile">
+                                <img src="${entry.avatar_url || 'https://placehold.co/40x40'}" class="user-avatar me-2" alt="User Avatar">
+                                <span>${entry.username}</span>
+                            </div>
+                        </td>
+                        <td>${entry.quizzes_completed}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td><span class="badge-score">${entry.total_score.toLocaleString()}</span></td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        async function loadStatistics() {
+            try {
+                const stats = await StatisticsAPI.getStatistics();
+                updateFooterStatistics(stats);
+            } catch (error) {
+                console.error('İstatistikler yüklenemedi:', error);
+            }
+        }
+
+        function updateFooterStatistics(stats) {
+            const footerBoxes = document.querySelectorAll('.footer-box');
+            
+            if (footerBoxes[0]) {
+                footerBoxes[0].innerHTML = `
+                    <h5>Aktif Kullanıcılar</h5>
+                    <p>${stats.total_users}+ Kullanıcı</p>
+                `;
+            }
+            
+            if (footerBoxes[1]) {
+                footerBoxes[1].innerHTML = `
+                    <h5>Testler</h5>
+                    <p>${stats.total_quizzes}+ Test</p>
+                `;
+            }
+            
+            if (footerBoxes[2]) {
+                footerBoxes[2].innerHTML = `
+                    <h5>Çözülen Testler</h5>
+                    <p>${stats.total_attempts}+ Test Çözüldü</p>
+                `;
+            }
+            
+            if (footerBoxes[3] && stats.latest_user) {
+                footerBoxes[3].innerHTML = `
+                    <h5>Son Kayıtlı Üye</h5>
+                    <p>${stats.latest_user}</p>
+                `;
+            }
+        }
+
         function applyFilters() {
             const testType = document.getElementById('test-type').value;
             const timePeriod = document.getElementById('time-period').value;
             
-            // Here you would typically make an AJAX request to get filtered data
-            // For demonstration purposes, we'll just show an alert
-            alert(`Filtreler uygulanıyor: Test Türü = ${testType}, Zaman Dilimi = ${timePeriod}`);
+            // Filtreleme mantığı burada uygulanabilir
+            showAlert(`Filtreler uygulanıyor: Test Türü = ${testType}, Zaman Dilimi = ${timePeriod}`, 'info');
             
-            // In a real application, you would then update the table with new data
-            // fetchLeaderboardData(testType, timePeriod);
-        }
-        
-        // Example function to fetch leaderboard data (not implemented)
-        function fetchLeaderboardData(testType, timePeriod) {
-            // Make API call to get data
-            // Update table with new data
+            // Gerçek uygulamada API'den filtrelenmiş veri çekilir
+            loadLeaderboard();
         }
     </script>
 </body>

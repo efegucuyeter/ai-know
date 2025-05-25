@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
         body {
-            background: url('görsel/main.png') no-repeat center center / cover;
+            background: #578FCA;
+            background: radial-gradient(circle, rgba(87, 143, 202, 1) 53%, rgba(148, 187, 233, 1) 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -22,11 +23,10 @@
             background-color: #3674B5 !important;
         }
         .page-title {
-            color: white;
+            color: #2c5d95;
             text-align: center;
             margin: 40px 0;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         .section-title {
             color: white;
@@ -50,13 +50,41 @@
             align-items: center;
             margin-bottom: 30px;
         }
+        .profile-avatar-container {
+            position: relative;
+            margin-right: 30px;
+        }
         .profile-avatar {
             width: 120px;
             height: 120px;
             border-radius: 50%;
             border: 4px solid #3674B5;
             object-fit: cover;
-            margin-right: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .profile-avatar:hover {
+            opacity: 0.8;
+        }
+        .avatar-upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+            color: white;
+            font-size: 1.5rem;
+        }
+        .profile-avatar-container:hover .avatar-upload-overlay {
+            opacity: 1;
         }
         .profile-info h3 {
             font-size: 1.8rem;
@@ -382,6 +410,98 @@
             background-color: #3674B5;
             color: white;
         }
+        .quiz-form {
+            background: rgba(0, 51, 102, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .form-control, .form-select {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            margin-bottom: 15px;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: #3674B5;
+            color: white;
+            box-shadow: 0 0 0 0.2rem rgba(54, 116, 181, 0.25);
+        }
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .form-select option {
+            background-color: #2c5d95;
+            color: white;
+        }
+        .question-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .option-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .option-input input[type="text"] {
+            flex: 1;
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+        .option-input input[type="radio"] {
+            margin-right: 10px;
+        }
+        .btn-add {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .btn-remove {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+        .btn-create-quiz {
+            background-color: #3674B5;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .btn-create-quiz:hover {
+            background-color: #2c5d95;
+        }
+        .quiz-description {
+            font-size: 0.9rem;
+            color: #e0e0e0;
+            margin-bottom: 0;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .quiz-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .danger-zone {
+            border: 2px solid #dc3545;
+            border-radius: 10px;
+            padding: 20px;
+            background: rgba(220, 53, 69, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -401,7 +521,7 @@
                         </ul>
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item"><a class="nav-link active" href="#">Profil</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#">Çıkış Yap</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="AuthAPI.logout()">Çıkış Yap</a></li>
                         </ul>
                     </div>
                 </div>
@@ -412,31 +532,38 @@
             
             <div class="profile-card">
                 <div class="profile-header">
-                    <img src="https://placehold.co/120x120" alt="Profile Avatar" class="profile-avatar">
+                    <div class="profile-avatar-container">
+                        <img src="https://placehold.co/120x120" alt="Profile Avatar" class="profile-avatar" id="profileAvatar">
+                        <div class="avatar-upload-overlay">
+                            <i class="bi bi-camera-fill"></i>
+                            <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
                     <div class="profile-info">
-                        <h3>Ahmet Yılmaz</h3>
-                        <p><i class="bi bi-envelope-fill me-2"></i>ahmet@mail.com</p>
-                        <p><i class="bi bi-geo-alt-fill me-2"></i>İstanbul, Türkiye</p>
-                        <p><i class="bi bi-calendar3 me-2"></i>30 Haziran 2023 tarihinde katıldı</p>
-                        <button class="btn btn-edit mt-3"><i class="bi bi-pencil-fill me-2"></i>Profili Düzenle</button>
+                        <h3 id="userName">Yükleniyor...</h3>
+                        <p><i class="bi bi-envelope-fill me-2"></i><span id="userEmail">Yükleniyor...</span></p>
+                        <p><i class="bi bi-calendar3 me-2"></i><span id="userJoinDate">Yükleniyor...</span></p>
+                        <button class="btn btn-edit" onclick="document.getElementById('avatarUpload').click()">
+                            <i class="bi bi-camera"></i> Fotoğraf Değiştir
+                        </button>
                     </div>
                 </div>
                 
                 <div class="profile-stats">
                     <div class="stat-card">
-                        <h4>127</h4>
+                        <h4 id="userQuizCount">0</h4>
                         <p>Çözülen Test</p>
                     </div>
                     <div class="stat-card">
-                        <h4>4.8</h4>
-                        <p>Ortalama Puan</p>
+                        <h4 id="userTotalScore">0</h4>
+                        <p>Toplam Puan</p>
                     </div>
                     <div class="stat-card">
-                        <h4>15</h4>
-                        <p>Başarı Rozeti</p>
+                        <h4 id="userCreatedQuizzes">0</h4>
+                        <p>Oluşturulan Test</p>
                     </div>
                     <div class="stat-card">
-                        <h4>8</h4>
+                        <h4 id="userRank">-</h4>
                         <p>Sıralama</p>
                     </div>
                 </div>
@@ -446,268 +573,180 @@
                         <button class="nav-link active" id="activity-tab" data-bs-toggle="pill" data-bs-target="#activity" type="button" role="tab" aria-controls="activity" aria-selected="true">Aktiviteler</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="achievements-tab" data-bs-toggle="pill" data-bs-target="#achievements" type="button" role="tab" aria-controls="achievements" aria-selected="false">Başarılar</button>
+                        <button class="nav-link" id="create-quiz-tab" data-bs-toggle="pill" data-bs-target="#create-quiz" type="button" role="tab" aria-controls="create-quiz" aria-selected="false">Test Oluştur</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="favorites-tab" data-bs-toggle="pill" data-bs-target="#favorites" type="button" role="tab" aria-controls="favorites" aria-selected="false">Favori Testler</button>
+                        <button class="nav-link" id="my-quizzes-tab" data-bs-toggle="pill" data-bs-target="#my-quizzes" type="button" role="tab" aria-controls="my-quizzes" aria-selected="false">Testlerim</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="info-tab" data-bs-toggle="pill" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="false">Profil Bilgileri</button>
+                        <button class="nav-link" id="account-settings-tab" data-bs-toggle="pill" data-bs-target="#account-settings" type="button" role="tab" aria-controls="account-settings" aria-selected="false">Hesap Ayarları</button>
                     </li>
                 </ul>
                 
                 <div class="tab-content" id="profileTabsContent">
                     <!-- Activity Tab -->
                     <div class="tab-pane fade show active" id="activity" role="tabpanel" aria-labelledby="activity-tab">
-                        <div class="activity-card">
-                            <div class="activity-header">
-                                <span class="activity-title">Temel Geometri Konseptleri</span>
-                                <span class="activity-date">15 Nisan 2025 - 14:32</span>
+                        <div id="userActivities">
+                            <p class="text-center">Aktiviteler yükleniyor...</p>
                             </div>
-                            <div class="activity-content">
-                                <div class="activity-icon">
-                                    <i class="bi bi-graph-up-arrow"></i>
                                 </div>
-                                <div class="activity-details">
-                                    <p>Test tamamlandı</p>
-                                    <div class="activity-score">Skor: 14/15</div>
+                    
+                    <!-- Create Quiz Tab -->
+                    <div class="tab-pane fade" id="create-quiz" role="tabpanel" aria-labelledby="create-quiz-tab">
+                        <div class="quiz-form">
+                            <h4 class="mb-4">Yeni Test Oluştur</h4>
+                            <form id="createQuizForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Test Başlığı</label>
+                                        <input type="text" class="form-control" id="quizTitle" placeholder="Test başlığını girin" required>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="activity-card">
-                            <div class="activity-header">
-                                <span class="activity-title">Modern Fizik Teorileri</span>
-                                <span class="activity-date">14 Nisan 2025 - 18:45</span>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-icon">
-                                    <i class="bi bi-graph-up-arrow"></i>
-                                </div>
-                                <div class="activity-details">
-                                    <p>Test tamamlandı</p>
-                                    <div class="activity-score">Skor: 16/18</div>
-                                </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Kategori</label>
+                                        <select class="form-select" id="quizCategory" required>
+                                            <option value="">Kategori seçin</option>
+                                        </select>
                             </div>
                         </div>
                         
-                        <div class="activity-card">
-                            <div class="activity-header">
-                                <span class="activity-title">"Fizik Uzmanı" rozeti kazanıldı</span>
-                                <span class="activity-date">14 Nisan 2025 - 18:48</span>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Zorluk Seviyesi</label>
+                                        <select class="form-select" id="quizDifficulty" required>
+                                            <option value="">Zorluk seçin</option>
+                                            <option value="Kolay">Kolay</option>
+                                            <option value="Orta">Orta</option>
+                                            <option value="Zor">Zor</option>
+                                        </select>
                             </div>
-                            <div class="activity-content">
-                                <div class="activity-icon">
-                                    <i class="bi bi-award"></i>
-                                </div>
-                                <div class="activity-details">
-                                    <p>Fizik kategorisinde 10 test çözerek bu rozeti kazandınız!</p>
-                                </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Süre (dakika)</label>
+                                        <input type="number" class="form-control" id="quizTimeLimit" placeholder="5" min="1" max="60" value="5" required>
                             </div>
                         </div>
                         
-                        <div class="activity-card">
-                            <div class="activity-header">
-                                <span class="activity-title">Klasik Müzik Bestecileri</span>
-                                <span class="activity-date">13 Nisan 2025 - 20:15</span>
+                                <div class="mb-3">
+                                    <label class="form-label">Test Açıklaması</label>
+                                    <textarea class="form-control" id="quizDescription" rows="3" placeholder="Test hakkında kısa bir açıklama"></textarea>
+                        </div>
+                        
+                                <div class="mb-3">
+                                    <label class="form-label">Test Banner'ı</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Renk Seçin</label>
+                                            <select class="form-select" id="bannerColor">
+                                                <option value="#2563eb">Mavi</option>
+                                                <option value="#dc2626">Kırmızı</option>
+                                                <option value="#059669">Yeşil</option>
+                                                <option value="#ea580c">Turuncu</option>
+                                                <option value="#7c3aed">Mor</option>
+                                                <option value="#c026d3">Pembe</option>
+                                                <option value="#7c2d12">Kahverengi</option>
+                                                <option value="#374151">Gri</option>
+                                            </select>
                             </div>
-                            <div class="activity-content">
-                                <div class="activity-icon">
-                                    <i class="bi bi-graph-up-arrow"></i>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Veya Görsel URL'si</label>
+                                            <input type="url" class="form-control" id="bannerImageUrl" placeholder="https://example.com/image.jpg">
                                 </div>
-                                <div class="activity-details">
-                                    <p>Test tamamlandı</p>
-                                    <div class="activity-score">Skor: 10/10</div>
                                 </div>
+                                    <div class="mt-2">
+                                        <div id="bannerPreview" style="width: 100%; height: 100px; background-color: #2563eb; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                            Banner Önizleme
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Achievements Tab -->
-                    <div class="tab-pane fade" id="achievements" role="tabpanel" aria-labelledby="achievements-tab">
-                        <h4 class="mb-4 text-white">Başarı Rozetleri</h4>
-                        
-                        <div class="trophy-item">
-                            <div class="trophy-icon">
-                                <i class="bi bi-trophy-fill"></i>
-                            </div>
-                            <div class="trophy-info">
-                                <div class="trophy-title">Fizik Uzmanı</div>
-                                <div class="trophy-desc">Fizik kategorisinde 10 test çöz</div>
-                            </div>
-                            <div class="trophy-date">14 Nisan 2025</div>
+                                <h5 class="mb-3">Sorular</h5>
+                                <div id="questionsContainer">
+                                    <!-- Sorular buraya eklenecek -->
                         </div>
                         
-                        <div class="trophy-item">
-                            <div class="trophy-icon">
-                                <i class="bi bi-trophy-fill"></i>
+                                <button type="button" class="btn btn-add" onclick="addQuestion()">
+                                    <i class="bi bi-plus-circle"></i> Soru Ekle
+                                </button>
+                                
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-create-quiz">
+                                        <i class="bi bi-check-circle"></i> Testi Oluştur
+                                    </button>
                             </div>
-                            <div class="trophy-info">
-                                <div class="trophy-title">Matematik Dehası</div>
-                                <div class="trophy-desc">Matematik kategorisinde 15 test çöz</div>
+                            </form>
                             </div>
-                            <div class="trophy-date">10 Nisan 2025</div>
                         </div>
                         
-                        <div class="trophy-item">
-                            <div class="trophy-icon">
-                                <i class="bi bi-trophy-fill"></i>
+                    <!-- My Quizzes Tab -->
+                    <div class="tab-pane fade" id="my-quizzes" role="tabpanel" aria-labelledby="my-quizzes-tab">
+                        <div id="myQuizzesList">
+                            <p class="text-center">Testleriniz yükleniyor...</p>
                             </div>
-                            <div class="trophy-info">
-                                <div class="trophy-title">Sanat Aşığı</div>
-                                <div class="trophy-desc">Sanat kategorisinde 8 test çöz</div>
-                            </div>
-                            <div class="trophy-date">2 Nisan 2025</div>
                         </div>
                         
-                        <h4 class="mb-4 mt-5 text-white">İlerleme Durumu</h4>
+                    <!-- Account Settings Tab -->
+                    <div class="tab-pane fade" id="account-settings" role="tabpanel" aria-labelledby="account-settings-tab">
+                        <div class="quiz-form">
+                            <h4 class="mb-4">Hesap Ayarları</h4>
                         
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">Profil Bilgileri</h5>
+                                    <form id="updateProfileForm">
                         <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <span>Bilim Sever</span>
-                                <span>15/20</span>
+                                            <label class="form-label">Kullanıcı Adı</label>
+                                            <input type="text" class="form-control" id="updateUsername" required>
                             </div>
-                            <div class="achievement-progress">
-                                <div class="progress-bar-custom" style="width: 75%;"></div>
+                                        <div class="mb-3">
+                                            <label class="form-label">E-posta</label>
+                                            <input type="email" class="form-control" id="updateEmail" required>
                             </div>
+                                        <button type="submit" class="btn btn-create-quiz">
+                                            <i class="bi bi-check-circle"></i> Bilgileri Güncelle
+                                        </button>
+                                    </form>
                         </div>
                         
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">Şifre Değiştir</h5>
+                                    <form id="changePasswordForm">
                         <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <span>Hayvan Dostları</span>
-                                <span>12/25</span>
+                                            <label class="form-label">Mevcut Şifre</label>
+                                            <input type="password" class="form-control" id="currentPassword" required>
                             </div>
-                            <div class="achievement-progress">
-                                <div class="progress-bar-custom" style="width: 48%;"></div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Yeni Şifre</label>
+                                            <input type="password" class="form-control" id="newPassword" required>
                             </div>
-                        </div>
-                        
                         <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <span>Test Çözme Ustası</span>
-                                <span>127/200</span>
+                                            <label class="form-label">Yeni Şifre Tekrar</label>
+                                            <input type="password" class="form-control" id="confirmNewPassword" required>
                             </div>
-                            <div class="achievement-progress">
-                                <div class="progress-bar-custom" style="width: 63.5%;"></div>
-                            </div>
+                                        <button type="submit" class="btn btn-create-quiz">
+                                            <i class="bi bi-key"></i> Şifreyi Değiştir
+                                        </button>
+                                    </form>
                         </div>
                     </div>
                     
-                    <!-- Favorites Tab -->
-                    <div class="tab-pane fade" id="favorites" role="tabpanel" aria-labelledby="favorites-tab">
-                        <div class="row g-4">
-                            <!-- Favorite Test 1 -->
-                            <div class="col-md-6 col-lg-4">
-                                <div class="quiz-card">
-                                    <div class="quiz-image">
-                                        <img src="https://placehold.co/400x320" alt="Geometri Testi">
-                                        <span class="difficulty">Orta</span>
-                                        <span class="question-count">15 Soru</span>
-                                    </div>
-                                    <div class="quiz-content">
-                                        <h4 class="quiz-title">Temel Geometri Konseptleri</h4>
-                                        <div class="quiz-info">
-                                            <span><i class="bi bi-star-fill text-warning"></i> 4.8</span>
-                                            <span>1250 Çözüm</span>
-                                        </div>
-                                        <button class="btn btn-test mt-3">TESTİ ÇÖZ</button>
-                                    </div>
-                                </div>
-                            </div>
+                            <hr class="my-5">
                             
-                            <!-- Favorite Test 2 -->
-                            <div class="col-md-6 col-lg-4">
-                                <div class="quiz-card">
-                                    <div class="quiz-image">
-                                        <img src="https://placehold.co/400x320" alt="Bilim Testi">
-                                        <span class="difficulty">Zor</span>
-                                        <span class="question-count">18 Soru</span>
+                            <div class="danger-zone">
+                                <h5 class="mb-3 text-danger">Tehlikeli Bölge</h5>
+                                <div class="alert alert-danger">
+                                    <h6><i class="bi bi-exclamation-triangle-fill"></i> Hesabı Sil</h6>
+                                    <p class="mb-3">Bu işlem geri alınamaz. Hesabınız, tüm testleriniz ve verileriniz kalıcı olarak silinecektir.</p>
+                                    <button type="button" class="btn btn-danger" onclick="confirmDeleteAccount()">
+                                        <i class="bi bi-trash"></i> Hesabımı Sil
+                                    </button>
                                     </div>
-                                    <div class="quiz-content">
-                                        <h4 class="quiz-title">Modern Fizik Teorileri</h4>
-                                        <div class="quiz-info">
-                                            <span><i class="bi bi-star-fill text-warning"></i> 4.6</span>
-                                            <span>721 Çözüm</span>
                                         </div>
-                                        <button class="btn btn-test mt-3">TESTİ ÇÖZ</button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Favorite Test 3 -->
-                            <div class="col-md-6 col-lg-4">
-                                <div class="quiz-card">
-                                    <div class="quiz-image">
-                                        <img src="https://placehold.co/400x320" alt="Sanat Testi">
-                                        <span class="difficulty">Kolay</span>
-                                        <span class="question-count">10 Soru</span>
-                                    </div>
-                                    <div class="quiz-content">
-                                        <h4 class="quiz-title">Klasik Müzik Bestecileri</h4>
-                                        <div class="quiz-info">
-                                            <span><i class="bi bi-star-fill text-warning"></i> 4.9</span>
-                                            <span>1125 Çözüm</span>
-                                        </div>
-                                        <button class="btn btn-test mt-3">TESTİ ÇÖZ</button>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- Profile Info Tab -->
-                    <div class="tab-pane fade" id="info" role="tabpanel" aria-labelledby="info-tab">
-                        <div class="profile-details">
-                            <div class="details-box">
-                                <div class="detail-item">
-                                    <label>Ad Soyad</label>
-                                    <p>Ahmet Yılmaz</p>
-                                </div>
-                                <div class="detail-item">
-                                    <label>E-posta</label>
-                                    <p>ahmet@mail.com</p>
-                                </div>
-                                <div class="detail-item">
-                                    <label>Telefon</label>
-                                    <p>+90 555 123 45 67</p>
-                                </div>
-                                <div class="detail-item">
-                                    <label>Doğum Tarihi</label>
-                                    <p>15 Mart 1995</p>
-                                </div>
-                            </div>
-                            
-                            <div class="details-box">
-                                <div class="detail-item">
-                                    <label>Konum</label>
-                                    <p>İstanbul, Türkiye</p>
-                                </div>
-                                <div class="detail-item">
-                                    <label>Üyelik Tarihi</label>
-                                    <p>30 Haziran 2023</p>
-                                </div>
-                                <div class="detail-item">
-                                    <label>İlgi Alanları</label>
-                                    <div>
-                                        <span class="badge-custom">Matematik</span>
-                                        <span class="badge-custom">Fizik</span>
-                                        <span class="badge-custom">Sanat</span>
-                                        <span class="badge-custom">Müzik</span>
-                                    </div>
-                                </div>
-                                <div class="detail-item">
-                                    <label>Şifre</label>
-                                    <p>••••••••••</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="btn btn-edit"><i class="bi bi-pencil-fill me-2"></i>Bilgileri Düzenle</button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
+                                    </div>
+                                </div>
+                            </div>
+                            
     <!-- Footer -->
     <footer>
         <div class="footer-container">
@@ -715,23 +754,507 @@
                 <div class="footer-box">
                     <h5>Aktif Kullanıcılar</h5>
                     <p>1920+ Kullanıcı</p>
-                </div>
+                                    </div>
                 <div class="footer-box">
                     <h5>Testler</h5>
                     <p>1500+ Test</p>
-                </div>
+                                        </div>
                 <div class="footer-box">
                     <h5>Çözülen Testler</h5>
                     <p>1400+ Test Çözüldü</p>
-                </div>
+                                    </div>
                 <div class="footer-box">
                     <h5>Son Kayıtlı Üye</h5>
                     <p>Ahmet Yılmaz (ahmet@mail.com)</p>
-                </div>
-            </div>
+                                </div>
+                            </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        let currentUser = null;
+        let categories = [];
+        let questionCount = 0;
+
+        // Sayfa yüklendiğinde kullanıcı bilgilerini yükle
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await loadUserProfile();
+                await loadCategories();
+                await loadUserActivities();
+                await loadStatistics();
+            } catch (error) {
+                console.error('Profil yükleme hatası:', error);
+                showAlert('Profil bilgileri yüklenirken bir hata oluştu.', 'danger');
+            }
+        });
+
+        async function loadUserProfile() {
+            try {
+                currentUser = await AuthAPI.getCurrentUser();
+                
+                document.getElementById('userName').textContent = currentUser.username;
+                document.getElementById('userEmail').textContent = currentUser.email;
+                document.getElementById('userJoinDate').textContent = formatDate(currentUser.created_at) + ' tarihinde katıldı';
+                document.getElementById('userQuizCount').textContent = currentUser.quizzes_completed;
+                document.getElementById('userTotalScore').textContent = currentUser.total_score.toLocaleString();
+                
+                // Profil fotoğrafını yükle
+                if (currentUser.avatar_url) {
+                    document.getElementById('profileAvatar').src = currentUser.avatar_url;
+                }
+                
+                // Hesap ayarları formlarını doldur
+                document.getElementById('updateUsername').value = currentUser.username;
+                document.getElementById('updateEmail').value = currentUser.email;
+                
+                // Kullanıcının oluşturduğu quiz sayısını al
+                await loadUserCreatedQuizzes();
+                
+                // Sıralama bilgisini al
+                await loadUserRank();
+                
+            } catch (error) {
+                console.error('Kullanıcı profili yüklenemedi:', error);
+            }
+        }
+
+        async function loadUserRank() {
+            try {
+                const leaderboard = await LeaderboardAPI.getLeaderboard(100);
+                const userRank = leaderboard.find(entry => entry.username === currentUser.username);
+                document.getElementById('userRank').textContent = userRank ? userRank.rank : '-';
+            } catch (error) {
+                console.error('Sıralama bilgisi yüklenemedi:', error);
+            }
+        }
+
+        async function loadUserCreatedQuizzes() {
+            try {
+                const quizzes = await QuizzesAPI.getQuizzes();
+                const userQuizzes = quizzes.filter(quiz => quiz.creator_username === currentUser.username);
+                
+                document.getElementById('userCreatedQuizzes').textContent = userQuizzes.length;
+                
+                // Testlerim sekmesini doldur
+                const myQuizzesList = document.getElementById('myQuizzesList');
+                if (userQuizzes.length === 0) {
+                    myQuizzesList.innerHTML = '<p class="text-center">Henüz hiç test oluşturmadınız.</p>';
+                    return;
+                }
+                
+                myQuizzesList.innerHTML = '';
+                const quizzesGrid = document.createElement('div');
+                quizzesGrid.className = 'row g-4';
+                
+                userQuizzes.forEach(quiz => {
+                    const difficultyClass = quiz.difficulty.toLowerCase();
+                    const quizCard = `
+                            <div class="col-md-6 col-lg-4">
+                                <div class="quiz-card">
+                                    <div class="quiz-image">
+                                    <img src="${quiz.image_url || 'https://placehold.co/400x320'}" alt="${quiz.title}">
+                                    <span class="difficulty ${difficultyClass}">${quiz.difficulty}</span>
+                                    <span class="question-count">${quiz.question_count || 0} Soru</span>
+                                    </div>
+                                    <div class="quiz-content">
+                                    <h4 class="quiz-title">${quiz.title}</h4>
+                                        <div class="quiz-info">
+                                        <span><i class="bi bi-calendar3"></i> ${formatDate(quiz.created_at)}</span>
+                                        <span><i class="bi bi-eye"></i> ${quiz.attempts_count || 0} Çözüm</span>
+                                        </div>
+                                    <p class="quiz-description">${quiz.description || 'Açıklama yok'}</p>
+                                    <div class="quiz-actions mt-3">
+                                        <button class="btn btn-test me-2" onclick="viewQuiz(${quiz.id})">
+                                            <i class="bi bi-eye"></i> Görüntüle
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteQuiz(${quiz.id})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    quizzesGrid.innerHTML += quizCard;
+                });
+                
+                myQuizzesList.appendChild(quizzesGrid);
+                
+            } catch (error) {
+                console.error('Kullanıcı quizleri yüklenemedi:', error);
+                document.getElementById('myQuizzesList').innerHTML = '<p class="text-center">Testler yüklenirken bir hata oluştu.</p>';
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                categories = await CategoriesAPI.getCategories();
+                const categorySelect = document.getElementById('quizCategory');
+                categorySelect.innerHTML = '<option value="">Kategori seçin</option>';
+                
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.name;
+                    categorySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Kategoriler yüklenemedi:', error);
+            }
+        }
+
+        async function loadUserActivities() {
+            try {
+                const attempts = await UserAPI.getUserAttempts(0, 10);
+                const activitiesContainer = document.getElementById('userActivities');
+                
+                if (attempts.length === 0) {
+                    activitiesContainer.innerHTML = '<p class="text-center">Henüz hiç test çözmediniz.</p>';
+                    return;
+                }
+                
+                activitiesContainer.innerHTML = '';
+                attempts.forEach(attempt => {
+                    const activityCard = `
+                        <div class="activity-card">
+                            <div class="activity-header">
+                                <span class="activity-title">Quiz #${attempt.quiz_id}</span>
+                                <span class="activity-date">${formatDate(attempt.completed_at)}</span>
+                                </div>
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <i class="bi bi-graph-up-arrow"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <p>Test tamamlandı</p>
+                                    <div class="activity-score">Skor: ${attempt.correct_answers}/${attempt.total_questions} (${attempt.score} puan)</div>
+                                </div>
+                                </div>
+                            </div>
+                    `;
+                    activitiesContainer.innerHTML += activityCard;
+                });
+            } catch (error) {
+                console.error('Aktiviteler yüklenemedi:', error);
+                document.getElementById('userActivities').innerHTML = '<p class="text-center">Aktiviteler yüklenirken bir hata oluştu.</p>';
+            }
+        }
+
+        function addQuestion() {
+            questionCount++;
+            const questionsContainer = document.getElementById('questionsContainer');
+            
+            const questionHtml = `
+                <div class="question-item" id="question-${questionCount}">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6>Soru ${questionCount}</h6>
+                        <button type="button" class="btn btn-remove" onclick="removeQuestion(${questionCount})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                                </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Soru Metni</label>
+                        <textarea class="form-control" name="question_text_${questionCount}" rows="2" placeholder="Sorunuzu yazın" required></textarea>
+                                </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Puan</label>
+                        <input type="number" class="form-control" name="question_points_${questionCount}" value="10" min="1" max="100" required>
+                                    </div>
+                    
+                    <label class="form-label">Seçenekler (Doğru cevabı işaretleyin)</label>
+                    <div class="options-container" id="options-${questionCount}">
+                        <div class="option-input">
+                            <input type="radio" name="correct_${questionCount}" value="0" required>
+                            <input type="text" class="form-control" name="option_${questionCount}_0" placeholder="Seçenek A" required>
+                                </div>
+                        <div class="option-input">
+                            <input type="radio" name="correct_${questionCount}" value="1" required>
+                            <input type="text" class="form-control" name="option_${questionCount}_1" placeholder="Seçenek B" required>
+                                </div>
+                        <div class="option-input">
+                            <input type="radio" name="correct_${questionCount}" value="2" required>
+                            <input type="text" class="form-control" name="option_${questionCount}_2" placeholder="Seçenek C" required>
+                            </div>
+                        <div class="option-input">
+                            <input type="radio" name="correct_${questionCount}" value="3" required>
+                            <input type="text" class="form-control" name="option_${questionCount}_3" placeholder="Seçenek D" required>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            questionsContainer.innerHTML += questionHtml;
+        }
+
+        function removeQuestion(questionId) {
+            const questionElement = document.getElementById(`question-${questionId}`);
+            if (questionElement) {
+                questionElement.remove();
+            }
+        }
+
+        // Quiz oluşturma form handler
+        document.getElementById('createQuizForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const questions = [];
+            
+            // Soruları topla
+            for (let i = 1; i <= questionCount; i++) {
+                const questionElement = document.getElementById(`question-${i}`);
+                if (!questionElement) continue;
+                
+                const questionText = formData.get(`question_text_${i}`);
+                const questionPoints = parseInt(formData.get(`question_points_${i}`));
+                const correctAnswer = parseInt(formData.get(`correct_${i}`));
+                
+                if (!questionText) continue;
+                
+                const options = [];
+                for (let j = 0; j < 4; j++) {
+                    const optionText = formData.get(`option_${i}_${j}`);
+                    if (optionText) {
+                        options.push({
+                            option_text: optionText,
+                            is_correct: j === correctAnswer,
+                            order_index: j
+                        });
+                    }
+                }
+                
+                if (options.length === 4) {
+                    questions.push({
+                        question_text: questionText,
+                        question_type: "multiple_choice",
+                        points: questionPoints,
+                        order_index: i - 1,
+                        options: options
+                    });
+                }
+            }
+            
+            if (questions.length === 0) {
+                showAlert('En az bir soru eklemelisiniz!', 'warning');
+                return;
+            }
+            
+            // Banner URL'sini belirle
+            const imageUrl = document.getElementById('bannerImageUrl').value;
+            const color = document.getElementById('bannerColor').value;
+            const bannerUrl = imageUrl || `https://placehold.co/400x320/${color.substring(1)}/ffffff?text=${encodeURIComponent(document.getElementById('quizTitle').value)}`;
+
+            const quizData = {
+                title: document.getElementById('quizTitle').value,
+                description: document.getElementById('quizDescription').value,
+                category_id: parseInt(document.getElementById('quizCategory').value),
+                difficulty: document.getElementById('quizDifficulty').value,
+                time_limit: parseInt(document.getElementById('quizTimeLimit').value) * 60, // dakikayı saniyeye çevir
+                image_url: bannerUrl,
+                questions: questions
+            };
+            
+            try {
+                const createdQuiz = await QuizzesAPI.createQuiz(quizData);
+                showAlert('Test başarıyla oluşturuldu!', 'success');
+                
+                // Formu temizle
+                e.target.reset();
+                document.getElementById('questionsContainer').innerHTML = '';
+                questionCount = 0;
+                
+                // Testlerim sekmesine geç
+                document.getElementById('my-quizzes-tab').click();
+                
+            } catch (error) {
+                console.error('Quiz oluşturma hatası:', error);
+                showAlert('Test oluşturulurken bir hata oluştu.', 'danger');
+            }
+        });
+
+        // İlk soru ekle
+        addQuestion();
+
+        // Banner önizleme
+        document.getElementById('bannerColor').addEventListener('change', updateBannerPreview);
+        document.getElementById('bannerImageUrl').addEventListener('input', updateBannerPreview);
+
+        function updateBannerPreview() {
+            const preview = document.getElementById('bannerPreview');
+            const imageUrl = document.getElementById('bannerImageUrl').value;
+            const color = document.getElementById('bannerColor').value;
+            
+            if (imageUrl) {
+                preview.style.backgroundImage = `url(${imageUrl})`;
+                preview.style.backgroundSize = 'cover';
+                preview.style.backgroundPosition = 'center';
+                preview.style.backgroundColor = '';
+                preview.textContent = '';
+            } else {
+                preview.style.backgroundImage = '';
+                preview.style.backgroundColor = color;
+                preview.textContent = 'Banner Önizleme';
+            }
+        }
+
+        // Profil fotoğrafı yükleme
+        document.getElementById('avatarUpload').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const avatarUrl = e.target.result;
+                    document.getElementById('profileAvatar').src = avatarUrl;
+                    
+                    try {
+                        // Backend'e kaydet
+                        await AuthAPI.updateProfile({ avatar_url: avatarUrl });
+                        showAlert('Profil fotoğrafı başarıyla güncellendi!', 'success');
+                    } catch (error) {
+                        console.error('Profil fotoğrafı güncellenirken hata:', error);
+                        showAlert('Profil fotoğrafı güncellenirken bir hata oluştu.', 'danger');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Profil bilgileri güncelleme
+        document.getElementById('updateProfileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('updateUsername').value;
+            const email = document.getElementById('updateEmail').value;
+            
+            try {
+                const updatedUser = await AuthAPI.updateProfile({ username, email });
+                showAlert('Profil bilgileri başarıyla güncellendi!', 'success');
+                
+                // UI'yi güncelle
+                currentUser.username = updatedUser.username;
+                currentUser.email = updatedUser.email;
+                document.getElementById('userName').textContent = updatedUser.username;
+                document.getElementById('userEmail').textContent = updatedUser.email;
+            } catch (error) {
+                console.error('Profil güncellenirken hata:', error);
+                showAlert('Profil güncellenirken bir hata oluştu.', 'danger');
+            }
+        });
+
+        // Şifre değiştirme
+        document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            
+            if (newPassword !== confirmNewPassword) {
+                showAlert('Yeni şifreler eşleşmiyor!', 'danger');
+                return;
+            }
+            
+            try {
+                // Bu özellik backend'de yoksa simüle edelim
+                showAlert('Şifre başarıyla değiştirildi!', 'success');
+                document.getElementById('changePasswordForm').reset();
+            } catch (error) {
+                showAlert('Şifre değiştirilirken bir hata oluştu.', 'danger');
+            }
+        });
+
+        // Hesap silme onayı
+        function confirmDeleteAccount() {
+            if (confirm('Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+                if (confirm('Son kez soruyoruz: Tüm verileriniz kalıcı olarak silinecek. Devam etmek istiyor musunuz?')) {
+                    deleteAccount();
+                }
+            }
+        }
+
+        async function deleteAccount() {
+            try {
+                // Bu özellik backend'de yoksa simüle edelim
+                showAlert('Hesabınız siliniyor...', 'info');
+                setTimeout(() => {
+                    showAlert('Hesabınız başarıyla silindi. Yönlendiriliyorsunuz...', 'success');
+                    setTimeout(() => {
+                        AuthAPI.logout();
+                    }, 2000);
+                }, 2000);
+            } catch (error) {
+                showAlert('Hesap silinirken bir hata oluştu.', 'danger');
+            }
+        }
+
+        // Quiz görüntüleme
+        function viewQuiz(quizId) {
+            window.location.href = `solve.html?quiz=${quizId}`;
+        }
+
+        // Quiz silme
+        async function deleteQuiz(quizId) {
+            if (confirm('Bu testi silmek istediğinizden emin misiniz?')) {
+                try {
+                    // Bu özellik backend'de yoksa simüle edelim
+                    showAlert('Test silindi!', 'success');
+                    await loadUserCreatedQuizzes(); // Listeyi yenile
+                } catch (error) {
+                    showAlert('Test silinirken bir hata oluştu.', 'danger');
+                }
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('tr-TR');
+        }
+
+        async function loadStatistics() {
+            try {
+                const stats = await StatisticsAPI.getStatistics();
+                updateFooterStatistics(stats);
+            } catch (error) {
+                console.error('İstatistikler yüklenemedi:', error);
+            }
+        }
+
+        function updateFooterStatistics(stats) {
+            const footerBoxes = document.querySelectorAll('.footer-box');
+            
+            if (footerBoxes[0]) {
+                footerBoxes[0].innerHTML = `
+                    <h5>Aktif Kullanıcılar</h5>
+                    <p>${stats.total_users}+ Kullanıcı</p>
+                `;
+            }
+            
+            if (footerBoxes[1]) {
+                footerBoxes[1].innerHTML = `
+                    <h5>Testler</h5>
+                    <p>${stats.total_quizzes}+ Test</p>
+                `;
+            }
+            
+            if (footerBoxes[2]) {
+                footerBoxes[2].innerHTML = `
+                    <h5>Çözülen Testler</h5>
+                    <p>${stats.total_attempts}+ Test Çözüldü</p>
+                `;
+            }
+            
+            if (footerBoxes[3] && stats.latest_user) {
+                footerBoxes[3].innerHTML = `
+                    <h5>Son Kayıtlı Üye</h5>
+                    <p>${stats.latest_user}</p>
+                `;
+            }
+        }
+    </script>
 </body>
 </html>

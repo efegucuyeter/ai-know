@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
         body {
-            background: url('görsel/main.png') no-repeat center center / cover;
+            background: #578FCA;
+            background: radial-gradient(circle, rgba(87, 143, 202, 1) 53%, rgba(148, 187, 233, 1) 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -22,11 +23,10 @@
             background-color: #3674B5 !important;
         }
         .page-title {
-            color: white;
+            color: #2c5d95;
             text-align: center;
             margin: 40px 0;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         .section-title {
             color: white;
@@ -141,11 +141,25 @@
             position: absolute;
             top: 10px;
             left: 10px;
-            background-color: #3674B5;
             color: white;
-            padding: 3px 8px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .difficulty.kolay {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+        .difficulty.orta {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+        .difficulty.zor {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
         }
         .category-badge {
             position: absolute;
@@ -226,9 +240,8 @@
             margin: 30px 0 20px 0;
         }
         .section-header h3 {
-            color: white;
+            color: #2c5d95;
             font-weight: bold;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
             padding-left: 10px;
             border-left: 5px solid #3674B5;
             margin: 0;
@@ -266,7 +279,7 @@
                         </ul>
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#">Çıkış Yap</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="AuthAPI.logout()">Çıkış Yap</a></li>
                         </ul>
                     </div>
                 </div>
@@ -562,5 +575,194 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        let categories = [];
+        let quizzes = [];
+
+        // Sayfa yüklendiğinde kategorileri ve quizleri yükle
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await loadCategories();
+                await loadQuizzes();
+                await loadStatistics();
+            } catch (error) {
+                console.error('Veri yükleme hatası:', error);
+                showAlert('Veriler yüklenirken bir hata oluştu.', 'danger');
+            }
+        });
+
+        async function loadCategories() {
+            try {
+                categories = await CategoriesAPI.getCategories();
+                renderCategories();
+            } catch (error) {
+                console.error('Kategoriler yüklenemedi:', error);
+            }
+        }
+
+        async function loadQuizzes() {
+            try {
+                quizzes = await QuizzesAPI.getQuizzes();
+                renderQuizzes();
+            } catch (error) {
+                console.error('Quizler yüklenemedi:', error);
+            }
+        }
+
+        function renderCategories() {
+            const categoriesContainer = document.querySelector('.row.g-4.mb-5');
+            if (!categoriesContainer) return;
+
+            categoriesContainer.innerHTML = '';
+
+            categories.forEach(category => {
+                const categoryQuizCount = quizzes.filter(quiz => quiz.category && quiz.category.id === category.id).length;
+                
+                const categoryCard = `
+                    <div class="col-md-6 col-lg-3">
+                        <div class="category-card position-relative" onclick="filterByCategory(${category.id})">
+                            <div class="category-image">
+                                <img src="${category.image_url || 'https://placehold.co/400x320'}" alt="${category.name}">
+                            </div>
+                            <span class="category-badge">${categoryQuizCount} Test</span>
+                            <div class="category-content">
+                                <h3 class="category-title">${category.name}</h3>
+                                <p class="category-info">${category.description || 'Çeşitli konularda testler'}</p>
+                                <button class="btn btn-test">TESTLERE BAŞLA</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                categoriesContainer.innerHTML += categoryCard;
+            });
+        }
+
+        function renderQuizzes() {
+            // Popüler testler bölümünü güncelle
+            const popularSection = document.querySelector('.section-header h3');
+            if (popularSection && popularSection.textContent === 'Popüler Testler') {
+                const popularContainer = popularSection.parentElement.nextElementSibling;
+                renderQuizSection(popularContainer, quizzes.slice(0, 4));
+            }
+
+            // Yeni eklenen testler bölümünü güncelle
+            const newSection = Array.from(document.querySelectorAll('.section-header h3')).find(h3 => h3.textContent === 'Yeni Eklenen Testler');
+            if (newSection) {
+                const newContainer = newSection.parentElement.nextElementSibling;
+                renderQuizSection(newContainer, quizzes.slice(4, 8));
+            }
+        }
+
+        function renderQuizSection(container, quizList) {
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            quizList.forEach(quiz => {
+                const difficultyClass = quiz.difficulty.toLowerCase();
+                const quizCard = `
+                    <div class="col-md-6 col-lg-3">
+                        <div class="quiz-card">
+                            <div class="quiz-image">
+                                <img src="${quiz.image_url || 'https://placehold.co/400x320'}" alt="${quiz.title}">
+                                <span class="difficulty ${difficultyClass}">${quiz.difficulty}</span>
+                                <span class="question-count">${quiz.question_count} Soru</span>
+                            </div>
+                            <div class="quiz-content">
+                                <h4 class="quiz-title">${quiz.title}</h4>
+                                <div class="quiz-info">
+                                    <span><i class="bi bi-star-fill text-warning"></i> 4.8</span>
+                                    <span>Yeni</span>
+                                </div>
+                                <div class="quiz-creator">
+                                    <img src="https://placehold.co/40x40" alt="Avatar" class="creator-avatar">
+                                    <span>${quiz.creator_username}</span>
+                                </div>
+                                <button class="btn btn-test mt-3" onclick="startQuiz(${quiz.id})">TESTİ ÇÖZ</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += quizCard;
+            });
+        }
+
+        function filterByCategory(categoryId) {
+            // Kategori filtreleme fonksiyonu
+            const filteredQuizzes = quizzes.filter(quiz => quiz.category && quiz.category.id === categoryId);
+            
+            // Tüm quiz bölümlerini güncelle
+            const allQuizContainers = document.querySelectorAll('.row.g-4.mb-5');
+            allQuizContainers.forEach((container, index) => {
+                if (index > 0) { // İlk container kategoriler için
+                    renderQuizSection(container, filteredQuizzes);
+                }
+            });
+
+            showAlert(`${categories.find(c => c.id === categoryId)?.name} kategorisi filtrelendi.`, 'info');
+        }
+
+        function startQuiz(quizId) {
+            // Quiz çözme sayfasına yönlendir
+            window.location.href = `solve.html?quiz=${quizId}`;
+        }
+
+        // Tümünü gör butonları için
+        document.querySelectorAll('.view-all').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Tüm quizleri göster
+                const allQuizContainers = document.querySelectorAll('.row.g-4.mb-5');
+                allQuizContainers.forEach((container, index) => {
+                    if (index > 0) { // İlk container kategoriler için
+                        renderQuizSection(container, quizzes);
+                    }
+                });
+                showAlert('Tüm testler gösteriliyor.', 'info');
+            });
+        });
+
+        async function loadStatistics() {
+            try {
+                const stats = await StatisticsAPI.getStatistics();
+                updateFooterStatistics(stats);
+            } catch (error) {
+                console.error('İstatistikler yüklenemedi:', error);
+            }
+        }
+
+        function updateFooterStatistics(stats) {
+            const footerBoxes = document.querySelectorAll('.footer-box');
+            
+            if (footerBoxes[0]) {
+                footerBoxes[0].innerHTML = `
+                    <h5>Aktif Kullanıcılar</h5>
+                    <p>${stats.total_users}+ Kullanıcı</p>
+                `;
+            }
+            
+            if (footerBoxes[1]) {
+                footerBoxes[1].innerHTML = `
+                    <h5>Testler</h5>
+                    <p>${stats.total_quizzes}+ Test</p>
+                `;
+            }
+            
+            if (footerBoxes[2]) {
+                footerBoxes[2].innerHTML = `
+                    <h5>Çözülen Testler</h5>
+                    <p>${stats.total_attempts}+ Test Çözüldü</p>
+                `;
+            }
+            
+            if (footerBoxes[3] && stats.latest_user) {
+                footerBoxes[3].innerHTML = `
+                    <h5>Son Kayıtlı Üye</h5>
+                    <p>${stats.latest_user}</p>
+                `;
+            }
+        }
+    </script>
 </body>
 </html>
