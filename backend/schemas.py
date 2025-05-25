@@ -19,6 +19,7 @@ class User(UserBase):
     avatar_url: Optional[str] = None
     created_at: datetime
     is_active: bool
+    is_admin: bool = False
     total_score: int
     quizzes_completed: int
     
@@ -175,4 +176,67 @@ class AppStatistics(BaseModel):
     total_quizzes: int
     total_attempts: int
     total_categories: int
-    latest_user: Optional[str] = None 
+    latest_user: Optional[str] = None
+
+# AI Question Generation Schemas
+class AIQuestionRequest(BaseModel):
+    category: str
+    difficulty: str  # Kolay, Orta, Zor
+    question_count: int
+    topic: Optional[str] = None
+
+class AIGeneratedQuestion(BaseModel):
+    question: str
+    options: dict  # {"A": "option1", "B": "option2", "C": "option3", "D": "option4"}
+    correct_answer: str  # A, B, C, or D
+
+class AIQuestionResponse(BaseModel):
+    questions: List[AIGeneratedQuestion]
+    success: bool
+    message: Optional[str] = None
+
+# Admin Schemas
+class AdminUserUpdate(BaseModel):
+    username: Optional[str] = None
+    email: Optional[str] = None
+    is_active: Optional[bool] = None
+    is_admin: Optional[bool] = None
+
+class AdminQuizUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    difficulty: Optional[str] = None
+    is_active: Optional[bool] = None
+    category_id: Optional[int] = None
+
+class AdminStats(BaseModel):
+    total_users: int
+    total_admins: int
+    total_quizzes: int
+    total_attempts: int
+    total_categories: int
+    active_users: int
+    inactive_users: int
+    active_quizzes: int
+    inactive_quizzes: int
+
+# Pagination Schemas
+class PaginationInfo(BaseModel):
+    current_page: int
+    total_pages: int
+    total_items: int
+    items_per_page: int
+    has_next: bool
+    has_prev: bool
+
+class PaginatedUsers(BaseModel):
+    users: List[User]
+    pagination: PaginationInfo
+
+class PaginatedQuizzes(BaseModel):
+    quizzes: List[dict]
+    pagination: PaginationInfo
+
+class PaginatedLeaderboard(BaseModel):
+    leaderboard: List[LeaderboardEntry]
+    pagination: PaginationInfo 

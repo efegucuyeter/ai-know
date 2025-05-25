@@ -183,7 +183,7 @@
             transform: scale(1.2);
         }
         .rating-text {
-            text-align: center;
+                text-align: center;
             font-size: 0.9rem;
             color: #e0e0e0;
         }
@@ -202,7 +202,7 @@
                     </div>
                 </div>
             </nav>
-
+            
             <!-- Quiz Container -->
             <div class="quiz-container" id="quizContainer">
                 <div class="quiz-header">
@@ -217,11 +217,11 @@
                         <div class="progress-fill" id="progressFill" style="width: 0%"></div>
                     </div>
                 </div>
-
+                
                 <div id="questionContainer">
                     <!-- Sorular buraya yüklenecek -->
                 </div>
-
+                
                 <div class="navigation">
                     <button class="btn btn-nav" id="prevBtn" onclick="previousQuestion()" disabled>
                         <i class="bi bi-arrow-left"></i> Önceki
@@ -233,7 +233,7 @@
                         <button class="btn btn-finish" id="finishBtn" onclick="finishQuiz()" style="display: none;">
                             <i class="bi bi-check-circle"></i> Testi Bitir
                         </button>
-                    </div>
+                </div>
                 </div>
             </div>
 
@@ -262,8 +262,8 @@
                                 <div class="col-md-3">
                                     <h5>Süre</h5>
                                     <p class="fs-4" id="timeTaken">0:00</p>
-                                </div>
-                            </div>
+        </div>
+    </div>
                             <div class="mt-4">
                                 <h5 class="mb-3">Bu testi nasıl değerlendirirsiniz?</h5>
                                 <div class="rating-container mb-4">
@@ -282,9 +282,9 @@
                                 <button class="btn btn-nav" onclick="window.location.href='leader_borad.html'">
                                     Liderlik Tablosu
                                 </button>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+                </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -381,14 +381,14 @@
                 option.classList.toggle('selected', index === optionIndex);
             });
         }
-
+        
         function nextQuestion() {
             if (currentQuestionIndex < currentQuiz.questions.length - 1) {
                 currentQuestionIndex++;
                 showQuestion(currentQuestionIndex);
             }
         }
-
+        
         function previousQuestion() {
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;

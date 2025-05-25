@@ -489,7 +489,6 @@
             margin-bottom: 0;
             overflow: hidden;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
         }
         .quiz-actions {
@@ -501,6 +500,39 @@
             border-radius: 10px;
             padding: 20px;
             background: rgba(220, 53, 69, 0.1);
+        }
+        .ai-question-preview {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .ai-question-preview:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .ai-loading {
+            text-align: center;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+        .ai-loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            color: white;
         }
     </style>
 </head>
@@ -521,6 +553,7 @@
                         </ul>
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item"><a class="nav-link active" href="#">Profil</a></li>
+                            <li class="nav-item" id="adminLink" style="display: none;"><a class="nav-link" href="admin.html">Admin</a></li>
                             <li class="nav-item"><a class="nav-link" href="#" onclick="AuthAPI.logout()">Çıkış Yap</a></li>
                         </ul>
                     </div>
@@ -593,8 +626,71 @@
                     
                     <!-- Create Quiz Tab -->
                     <div class="tab-pane fade" id="create-quiz" role="tabpanel" aria-labelledby="create-quiz-tab">
+                        <!-- AI Soru Oluşturma Bölümü -->
+                        <div class="quiz-form mb-4">
+                            <h4 class="mb-4">🤖 AI ile Soru Oluştur</h4>
+                            <form id="aiQuestionForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Kategori</label>
+                                        <select class="form-select" id="aiCategory" required>
+                                            <option value="">Kategori seçin</option>
+                                            <option value="Coding">Kodlama</option>
+                                            <option value="Genel Kültür">Genel Kültür</option>
+                                            <option value="Bayraklar">Bayraklar</option>
+                                            <option value="İngilizce">İngilizce</option>
+                                            <option value="Almanca">Almanca</option>
+                                            <option value="Dünya Tarihi">Dünya Tarihi</option>
+                                            <option value="Futbol">Futbol</option>
+                                            <option value="Müzik">Müzik</option>
+                                        </select>
+                                </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Zorluk Seviyesi</label>
+                                        <select class="form-select" id="aiDifficulty" required>
+                                            <option value="">Zorluk seçin</option>
+                                            <option value="Kolay">Kolay</option>
+                                            <option value="Orta">Orta</option>
+                                            <option value="Zor">Zor</option>
+                                        </select>
+                            </div>
+                        </div>
+                        
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Soru Sayısı</label>
+                                        <input type="number" class="form-control" id="aiQuestionCount" placeholder="5" min="1" max="20" value="5" required>
+                            </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Konu (Opsiyonel)</label>
+                                        <input type="text" class="form-control" id="aiTopic" placeholder="Örn: Python fonksiyonları">
+                                </div>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-create-quiz">
+                                        <i class="bi bi-magic"></i> AI ile Soru Oluştur
+                                    </button>
+                            </div>
+                            </form>
+                        </div>
+                        
+                        <!-- AI Sonuçları -->
+                        <div id="aiQuestionsResult" style="display: none;" class="quiz-form mb-4">
+                            <h5 class="mb-3">🎯 Oluşturulan Sorular</h5>
+                            <div id="aiGeneratedQuestions"></div>
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-create-quiz" onclick="useAIQuestions()">
+                                    <i class="bi bi-check-circle"></i> Bu Soruları Kullan
+                                </button>
+                                <button type="button" class="btn btn-secondary ms-2" onclick="clearAIQuestions()">
+                                    <i class="bi bi-x-circle"></i> Temizle
+                                </button>
+                            </div>
+                                </div>
+                        
                         <div class="quiz-form">
-                            <h4 class="mb-4">Yeni Test Oluştur</h4>
+                            <h4 class="mb-4">📝 Manuel Test Oluştur</h4>
                             <form id="createQuizForm">
                                 <div class="row">
                                     <div class="col-md-6">
@@ -622,13 +718,13 @@
                                     <div class="col-md-6">
                                         <label class="form-label">Süre (dakika)</label>
                                         <input type="number" class="form-control" id="quizTimeLimit" placeholder="5" min="1" max="60" value="5" required>
-                            </div>
-                        </div>
+                                </div>
+                                </div>
                         
                                 <div class="mb-3">
                                     <label class="form-label">Test Açıklaması</label>
                                     <textarea class="form-control" id="quizDescription" rows="3" placeholder="Test hakkında kısa bir açıklama"></textarea>
-                        </div>
+                            </div>
                         
                                 <div class="mb-3">
                                     <label class="form-label">Test Banner'ı</label>
@@ -645,23 +741,23 @@
                                                 <option value="#7c2d12">Kahverengi</option>
                                                 <option value="#374151">Gri</option>
                                             </select>
-                            </div>
+                        </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Veya Görsel URL'si</label>
                                             <input type="url" class="form-control" id="bannerImageUrl" placeholder="https://example.com/image.jpg">
-                                </div>
-                                </div>
+                    </div>
+                            </div>
                                     <div class="mt-2">
                                         <div id="bannerPreview" style="width: 100%; height: 100px; background-color: #2563eb; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
                                             Banner Önizleme
                             </div>
                         </div>
-                    </div>
-                    
+                        </div>
+                        
                                 <h5 class="mb-3">Sorular</h5>
                                 <div id="questionsContainer">
                                     <!-- Sorular buraya eklenecek -->
-                        </div>
+                            </div>
                         
                                 <button type="button" class="btn btn-add" onclick="addQuestion()">
                                     <i class="bi bi-plus-circle"></i> Soru Ekle
@@ -725,9 +821,9 @@
                                             <i class="bi bi-key"></i> Şifreyi Değiştir
                                         </button>
                                     </form>
+                            </div>
                         </div>
-                    </div>
-                    
+                        
                             <hr class="my-5">
                             
                             <div class="danger-zone">
@@ -738,15 +834,15 @@
                                     <button type="button" class="btn btn-danger" onclick="confirmDeleteAccount()">
                                         <i class="bi bi-trash"></i> Hesabımı Sil
                                     </button>
-                                    </div>
+                            </div>
                                         </div>
                         </div>
                     </div>
                 </div>
-                                    </div>
-                                </div>
                             </div>
-                            
+                        </div>
+                    </div>
+                    
     <!-- Footer -->
     <footer>
         <div class="footer-container">
@@ -777,6 +873,7 @@
         let currentUser = null;
         let categories = [];
         let questionCount = 0;
+        let aiGeneratedQuestions = [];
 
         // Sayfa yüklendiğinde kullanıcı bilgilerini yükle
         document.addEventListener('DOMContentLoaded', async function() {
@@ -809,6 +906,11 @@
                 // Hesap ayarları formlarını doldur
                 document.getElementById('updateUsername').value = currentUser.username;
                 document.getElementById('updateEmail').value = currentUser.email;
+                
+                // Admin linkini göster
+                if (currentUser.is_admin) {
+                    document.getElementById('adminLink').style.display = 'block';
+                }
                 
                 // Kullanıcının oluşturduğu quiz sayısını al
                 await loadUserCreatedQuizzes();
@@ -923,15 +1025,15 @@
                             <div class="activity-header">
                                 <span class="activity-title">Quiz #${attempt.quiz_id}</span>
                                 <span class="activity-date">${formatDate(attempt.completed_at)}</span>
-                                </div>
+                                    </div>
                             <div class="activity-content">
                                 <div class="activity-icon">
                                     <i class="bi bi-graph-up-arrow"></i>
-                                </div>
+                                        </div>
                                 <div class="activity-details">
                                     <p>Test tamamlandı</p>
                                     <div class="activity-score">Skor: ${attempt.correct_answers}/${attempt.total_questions} (${attempt.score} puan)</div>
-                                </div>
+                                    </div>
                                 </div>
                             </div>
                     `;
@@ -954,17 +1056,17 @@
                         <button type="button" class="btn btn-remove" onclick="removeQuestion(${questionCount})">
                             <i class="bi bi-trash"></i>
                         </button>
-                                </div>
+                        </div>
                     
                     <div class="mb-3">
                         <label class="form-label">Soru Metni</label>
                         <textarea class="form-control" name="question_text_${questionCount}" rows="2" placeholder="Sorunuzu yazın" required></textarea>
-                                </div>
+                    </div>
                     
                     <div class="mb-3">
                         <label class="form-label">Puan</label>
                         <input type="number" class="form-control" name="question_points_${questionCount}" value="10" min="1" max="100" required>
-                                    </div>
+                                </div>
                     
                     <label class="form-label">Seçenekler (Doğru cevabı işaretleyin)</label>
                     <div class="options-container" id="options-${questionCount}">
@@ -979,11 +1081,11 @@
                         <div class="option-input">
                             <input type="radio" name="correct_${questionCount}" value="2" required>
                             <input type="text" class="form-control" name="option_${questionCount}_2" placeholder="Seçenek C" required>
-                            </div>
+                                </div>
                         <div class="option-input">
                             <input type="radio" name="correct_${questionCount}" value="3" required>
                             <input type="text" class="form-control" name="option_${questionCount}_3" placeholder="Seçenek D" required>
-                        </div>
+                            </div>
                     </div>
                 </div>
             `;
@@ -1079,6 +1181,59 @@
 
         // İlk soru ekle
         addQuestion();
+
+        // AI Soru Oluşturma Form Handler
+        document.getElementById('aiQuestionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const category = document.getElementById('aiCategory').value;
+            const difficulty = document.getElementById('aiDifficulty').value;
+            const questionCount = parseInt(document.getElementById('aiQuestionCount').value);
+            const topic = document.getElementById('aiTopic').value;
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                // Loading state
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> AI Soruları Oluşturuyor...';
+                submitBtn.disabled = true;
+                
+                // Loading animasyonu göster
+                const resultDiv = document.getElementById('aiQuestionsResult');
+                const container = document.getElementById('aiGeneratedQuestions');
+                container.innerHTML = `
+                    <div class="ai-loading">
+                        <i class="bi bi-gear-fill"></i>
+                        <p class="mt-3">AI soruları oluşturuyor, lütfen bekleyin...</p>
+                        <small>Bu işlem 10-30 saniye sürebilir</small>
+                                </div>
+                `;
+                resultDiv.style.display = 'block';
+                
+                const response = await AIAPI.generateQuestions(category, difficulty, questionCount, topic || null);
+                
+                if (response.success && response.questions.length > 0) {
+                    aiGeneratedQuestions = response.questions;
+                    displayAIQuestions(response.questions);
+                    showAlert('AI soruları başarıyla oluşturuldu!', 'success');
+                } else {
+                    showAlert(response.message || 'AI soruları oluşturulamadı.', 'danger');
+                    // Hata durumunda loading'i gizle
+                    document.getElementById('aiQuestionsResult').style.display = 'none';
+                }
+                
+            } catch (error) {
+                console.error('AI soru oluşturma hatası:', error);
+                showAlert('AI soruları oluşturulurken bir hata oluştu.', 'danger');
+                // Hata durumunda loading'i gizle
+                document.getElementById('aiQuestionsResult').style.display = 'none';
+            } finally {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
 
         // Banner önizleme
         document.getElementById('bannerColor').addEventListener('change', updateBannerPreview);
@@ -1213,6 +1368,183 @@
         function formatDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString('tr-TR');
+        }
+
+        function displayAIQuestions(questions) {
+            const container = document.getElementById('aiGeneratedQuestions');
+            const resultDiv = document.getElementById('aiQuestionsResult');
+            
+            container.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionHtml = `
+                    <div class="ai-question-preview" id="ai-question-${index}">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0"><i class="bi bi-question-circle me-2"></i>Soru ${index + 1}</h6>
+                            <button type="button" class="btn btn-sm btn-outline-light" onclick="editAIQuestion(${index})">
+                                <i class="bi bi-pencil"></i> Düzenle
+                            </button>
+                                </div>
+                        
+                        <div class="mb-3">
+                            <div class="fw-bold mb-2">📝 Soru:</div>
+                            <div class="ps-3" id="ai-q-text-${index}">${question.question}</div>
+                                    </div>
+                        
+                        <div class="mb-3">
+                            <div class="fw-bold mb-2">📋 Seçenekler:</div>
+                            <div class="ps-3">
+                                <div class="mb-1 ${question.correct_answer === 'A' ? 'text-success fw-bold' : ''}">
+                                    A) <span id="ai-opt-a-${index}">${question.options.A}</span>
+                                    ${question.correct_answer === 'A' ? '<i class="bi bi-check-circle-fill text-success ms-2"></i>' : ''}
+                                </div>
+                                <div class="mb-1 ${question.correct_answer === 'B' ? 'text-success fw-bold' : ''}">
+                                    B) <span id="ai-opt-b-${index}">${question.options.B}</span>
+                                    ${question.correct_answer === 'B' ? '<i class="bi bi-check-circle-fill text-success ms-2"></i>' : ''}
+                                </div>
+                                <div class="mb-1 ${question.correct_answer === 'C' ? 'text-success fw-bold' : ''}">
+                                    C) <span id="ai-opt-c-${index}">${question.options.C}</span>
+                                    ${question.correct_answer === 'C' ? '<i class="bi bi-check-circle-fill text-success ms-2"></i>' : ''}
+                            </div>
+                                <div class="mb-1 ${question.correct_answer === 'D' ? 'text-success fw-bold' : ''}">
+                                    D) <span id="ai-opt-d-${index}">${question.options.D}</span>
+                                    ${question.correct_answer === 'D' ? '<i class="bi bi-check-circle-fill text-success ms-2"></i>' : ''}
+                        </div>
+                    </div>
+                </div>
+                        
+                        <div class="text-end">
+                            <span class="badge bg-success">✅ Doğru Cevap: <span id="ai-correct-${index}">${question.correct_answer}</span></span>
+            </div>
+        </div>
+                `;
+                container.innerHTML += questionHtml;
+            });
+            
+            resultDiv.style.display = 'block';
+        }
+
+        function editAIQuestion(index) {
+            const question = aiGeneratedQuestions[index];
+            
+            const newQuestionText = prompt('Soru metnini düzenleyin:', question.question);
+            if (newQuestionText !== null) {
+                question.question = newQuestionText;
+                document.getElementById(`ai-q-text-${index}`).textContent = newQuestionText;
+            }
+            
+            const newOptionA = prompt('A seçeneğini düzenleyin:', question.options.A);
+            if (newOptionA !== null) {
+                question.options.A = newOptionA;
+                document.getElementById(`ai-opt-a-${index}`).textContent = newOptionA;
+            }
+            
+            const newOptionB = prompt('B seçeneğini düzenleyin:', question.options.B);
+            if (newOptionB !== null) {
+                question.options.B = newOptionB;
+                document.getElementById(`ai-opt-b-${index}`).textContent = newOptionB;
+            }
+            
+            const newOptionC = prompt('C seçeneğini düzenleyin:', question.options.C);
+            if (newOptionC !== null) {
+                question.options.C = newOptionC;
+                document.getElementById(`ai-opt-c-${index}`).textContent = newOptionC;
+            }
+            
+            const newOptionD = prompt('D seçeneğini düzenleyin:', question.options.D);
+            if (newOptionD !== null) {
+                question.options.D = newOptionD;
+                document.getElementById(`ai-opt-d-${index}`).textContent = newOptionD;
+            }
+            
+            const newCorrect = prompt('Doğru cevabı seçin (A, B, C, D):', question.correct_answer);
+            if (newCorrect !== null && ['A', 'B', 'C', 'D'].includes(newCorrect.toUpperCase())) {
+                question.correct_answer = newCorrect.toUpperCase();
+                document.getElementById(`ai-correct-${index}`).textContent = newCorrect.toUpperCase();
+            }
+        }
+
+        function useAIQuestions() {
+            if (aiGeneratedQuestions.length === 0) {
+                showAlert('Kullanılacak AI sorusu bulunamadı!', 'warning');
+                return;
+            }
+            
+            // Manuel form alanlarını temizle
+            document.getElementById('questionsContainer').innerHTML = '';
+            questionCount = 0;
+            
+            // AI sorularını manuel forma aktar
+            aiGeneratedQuestions.forEach((aiQuestion, index) => {
+                questionCount++;
+                const questionsContainer = document.getElementById('questionsContainer');
+                
+                const questionHtml = `
+                    <div class="question-item" id="question-${questionCount}">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6>Soru ${questionCount}</h6>
+                            <button type="button" class="btn btn-remove" onclick="removeQuestion(${questionCount})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+    </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Soru Metni</label>
+                            <textarea class="form-control" name="question_text_${questionCount}" rows="2" placeholder="Sorunuzu yazın" required>${aiQuestion.question}</textarea>
+                </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Puan</label>
+                            <input type="number" class="form-control" name="question_points_${questionCount}" value="10" min="1" max="100" required>
+                </div>
+                        
+                        <label class="form-label">Seçenekler (Doğru cevabı işaretleyin)</label>
+                        <div class="options-container" id="options-${questionCount}">
+                            <div class="option-input">
+                                <input type="radio" name="correct_${questionCount}" value="0" ${aiQuestion.correct_answer === 'A' ? 'checked' : ''} required>
+                                <input type="text" class="form-control" name="option_${questionCount}_0" placeholder="Seçenek A" value="${aiQuestion.options.A}" required>
+                </div>
+                            <div class="option-input">
+                                <input type="radio" name="correct_${questionCount}" value="1" ${aiQuestion.correct_answer === 'B' ? 'checked' : ''} required>
+                                <input type="text" class="form-control" name="option_${questionCount}_1" placeholder="Seçenek B" value="${aiQuestion.options.B}" required>
+                </div>
+                            <div class="option-input">
+                                <input type="radio" name="correct_${questionCount}" value="2" ${aiQuestion.correct_answer === 'C' ? 'checked' : ''} required>
+                                <input type="text" class="form-control" name="option_${questionCount}_2" placeholder="Seçenek C" value="${aiQuestion.options.C}" required>
+            </div>
+                            <div class="option-input">
+                                <input type="radio" name="correct_${questionCount}" value="3" ${aiQuestion.correct_answer === 'D' ? 'checked' : ''} required>
+                                <input type="text" class="form-control" name="option_${questionCount}_3" placeholder="Seçenek D" value="${aiQuestion.options.D}" required>
+        </div>
+                        </div>
+                    </div>
+                `;
+                
+                questionsContainer.innerHTML += questionHtml;
+            });
+            
+            // AI kategori ve zorluk bilgilerini manuel forma aktar
+            const aiCategory = document.getElementById('aiCategory').value;
+            const aiDifficulty = document.getElementById('aiDifficulty').value;
+            
+            // Kategori ID'sini bul
+            const categoryOption = categories.find(cat => cat.name === aiCategory);
+            if (categoryOption) {
+                document.getElementById('quizCategory').value = categoryOption.id;
+            }
+            document.getElementById('quizDifficulty').value = aiDifficulty;
+            
+            showAlert(`${aiGeneratedQuestions.length} AI sorusu manuel forma aktarıldı! Artık düzenleyebilir ve testi oluşturabilirsiniz.`, 'success');
+            
+            // AI sonuçlarını gizle
+            clearAIQuestions();
+        }
+
+        function clearAIQuestions() {
+            document.getElementById('aiQuestionsResult').style.display = 'none';
+            document.getElementById('aiGeneratedQuestions').innerHTML = '';
+            aiGeneratedQuestions = [];
+            document.getElementById('aiQuestionForm').reset();
         }
 
         async function loadStatistics() {

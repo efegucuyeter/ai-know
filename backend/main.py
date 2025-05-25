@@ -8,7 +8,8 @@ from typing import List
 import crud
 import schemas
 from database import get_db, create_tables
-from auth import authenticate_user, create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES
+from auth import authenticate_user, create_access_token, get_current_user, get_current_admin_user, ACCESS_TOKEN_EXPIRE_MINUTES
+import ai
 
 # Veritabanı tablolarını oluştur
 create_tables()
@@ -170,14 +171,102 @@ def read_user_attempts(
     return crud.get_user_attempts(db, user_id=current_user.id, skip=skip, limit=limit)
 
 # Leaderboard endpoint
-@app.get("/api/leaderboard", response_model=List[schemas.LeaderboardEntry])
-def read_leaderboard(limit: int = 10, db: Session = Depends(get_db)):
-    return crud.get_leaderboard(db, limit=limit)
+@app.get("/api/leaderboard", response_model=schemas.PaginatedLeaderboard)
+def read_leaderboard(page: int = 1, limit: int = 10, db: Session = Depends(get_db)):
+    return crud.get_leaderboard_paginated(db, page=page, limit=limit)
 
 # Statistics endpoint
 @app.get("/api/statistics", response_model=schemas.AppStatistics)
 def get_statistics(db: Session = Depends(get_db)):
     return crud.get_app_statistics(db)
+
+# AI Question Generation endpoint
+@app.post("/api/ai/generate-questions", response_model=schemas.AIQuestionResponse)
+def generate_ai_questions(
+    request: schemas.AIQuestionRequest,
+    current_user: schemas.User = Depends(get_current_user)
+):
+    return ai.generate_ai_questions(
+        category=request.category,
+        difficulty=request.difficulty,
+        question_count=request.question_count,
+        topic=request.topic
+    )
+
+# Admin endpoints
+@app.get("/api/admin/users", response_model=schemas.PaginatedUsers)
+def get_all_users_admin(
+    page: int = 1,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    current_admin: schemas.User = Depends(get_current_admin_user)
+):
+    return crud.get_all_users_paginated(db, page=page, limit=limit)
+
+@app.put("/api/admin/users/{user_id}", response_model=schemas.User)
+def update_user_admin(
+    user_id: int,
+    user_update: schemas.AdminUserUpdate,
+    db: Session = Depends(get_db),
+    current_admin: schemas.User = Depends(get_current_admin_user)
+):
+    updated_user = crud.admin_update_user(db, user_id=user_id, user_update=user_update)
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return updated_user
+
+@app.delete("/api/admin/users/{user_id}")
+def delete_user_admin(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_admin: schemas.User = Depends(get_current_admin_user)
+):
+    if user_id == current_admin.id:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    
+    success = crud.admin_delete_user(db, user_id=user_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "User deleted successfully"}
+
+@app.get("/api/admin/quizzes", response_model=schemas.PaginatedQuizzes)
+def get_all_quizzes_admin(
+    page: int = 1,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    current_admin: schemas.User = Depends(get_current_admin_user)
+):
+    return crud.get_all_quizzes_admin_paginated(db, page=page, limit=limit)
+
+@app.put("/api/admin/quizzes/{quiz_id}")
+def update_quiz_admin(
+    quiz_id: int,
+    quiz_update: schemas.AdminQuizUpdate,
+    db: Session = Depends(get_db),
+    current_admin: schemas.User = Depends(get_current_admin_user)
+):
+    updated_quiz = crud.admin_update_quiz(db, quiz_id=quiz_id, quiz_update=quiz_update)
+    if not updated_quiz:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+    return updated_quiz
+
+@app.delete("/api/admin/quizzes/{quiz_id}")
+def delete_quiz_admin(
+    quiz_id: int,
+    db: Session = Depends(get_db),
+    current_admin: schemas.User = Depends(get_current_admin_user)
+):
+    success = crud.admin_delete_quiz(db, quiz_id=quiz_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+    return {"message": "Quiz deleted successfully"}
+
+@app.get("/api/admin/statistics", response_model=schemas.AdminStats)
+def get_admin_statistics(
+    db: Session = Depends(get_db),
+    current_admin: schemas.User = Depends(get_current_admin_user)
+):
+    return crud.get_admin_statistics(db)
 
 # Health check
 @app.get("/api/health")

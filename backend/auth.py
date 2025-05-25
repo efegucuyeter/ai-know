@@ -64,4 +64,12 @@ def authenticate_user(db: Session, email: str, password: str):
         return False
     if not verify_password(password, user.hashed_password):
         return False
-    return user 
+    return user
+
+def get_current_admin_user(current_user: schemas.User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    return current_user 

@@ -279,6 +279,7 @@
                         </ul>
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
+                            <li class="nav-item" id="adminLink" style="display: none;"><a class="nav-link" href="admin.html">Admin</a></li>
                             <li class="nav-item"><a class="nav-link" href="#" onclick="AuthAPI.logout()">Çıkış Yap</a></li>
                         </ul>
                     </div>
@@ -586,11 +587,23 @@
                 await loadCategories();
                 await loadQuizzes();
                 await loadStatistics();
+                await checkAdminAccess();
             } catch (error) {
                 console.error('Veri yükleme hatası:', error);
                 showAlert('Veriler yüklenirken bir hata oluştu.', 'danger');
             }
         });
+
+        async function checkAdminAccess() {
+            try {
+                const currentUser = await AuthAPI.getCurrentUser();
+                if (currentUser.is_admin) {
+                    document.getElementById('adminLink').style.display = 'block';
+                }
+            } catch (error) {
+                // Kullanıcı giriş yapmamış, admin linkini gösterme
+            }
+        }
 
         async function loadCategories() {
             try {

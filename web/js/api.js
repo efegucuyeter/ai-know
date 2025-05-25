@@ -169,8 +169,8 @@ class UserAPI {
 
 // Leaderboard API
 class LeaderboardAPI {
-    static async getLeaderboard(limit = 10) {
-        return await apiCall(`/leaderboard?limit=${limit}`);
+    static async getLeaderboard(page = 1, limit = 10) {
+        return await apiCall(`/leaderboard?page=${page}&limit=${limit}`);
     }
 }
 
@@ -178,6 +178,62 @@ class LeaderboardAPI {
 class StatisticsAPI {
     static async getStatistics() {
         return await apiCall('/statistics');
+    }
+}
+
+// AI API
+class AIAPI {
+    static async generateQuestions(category, difficulty, questionCount, topic = null) {
+        return await apiCall('/ai/generate-questions', {
+            method: 'POST',
+            body: JSON.stringify({
+                category,
+                difficulty,
+                question_count: questionCount,
+                topic
+            })
+        });
+    }
+}
+
+// Admin API
+class AdminAPI {
+    static async getAllUsers(page = 1, limit = 10) {
+        return await apiCall(`/admin/users?page=${page}&limit=${limit}`);
+    }
+    
+    static async updateUser(userId, updateData) {
+        return await apiCall(`/admin/users/${userId}`, {
+            method: 'PUT',
+            body: JSON.stringify(updateData)
+        });
+    }
+    
+    static async deleteUser(userId) {
+        return await apiCall(`/admin/users/${userId}`, {
+            method: 'DELETE'
+        });
+    }
+    
+    static async getAllQuizzes(page = 1, limit = 10) {
+        return await apiCall(`/admin/quizzes?page=${page}&limit=${limit}`);
+    }
+    
+    static async updateQuiz(quizId, updateData) {
+        return await apiCall(`/admin/quizzes/${quizId}`, {
+            method: 'PUT',
+            body: JSON.stringify(updateData)
+        });
+    }
+    
+    static async deleteQuiz(quizId) {
+        return await apiCall(`/admin/quizzes/${quizId}`, {
+            method: 'DELETE'
+        });
+    }
+    
+    static async getAdminStatistics() {
+        return await apiCall('/admin/statistics');
     }
 }
 

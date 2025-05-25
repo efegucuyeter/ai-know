@@ -22,6 +22,7 @@ class User(Base):
     avatar_url = Column(String, default="https://placehold.co/120x120")
     created_at = Column(DateTime, default=datetime.utcnow)
     is_active = Column(Boolean, default=True)
+    is_admin = Column(Boolean, default=False)
     total_score = Column(Integer, default=0)
     quizzes_completed = Column(Integer, default=0)
     

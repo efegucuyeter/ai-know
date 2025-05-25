@@ -31,7 +31,7 @@ def seed_database():
             else:
                 created_categories.append(existing_cat)
         
-        # Test kullanıcısı oluştur
+        # Test kullanıcısı oluştur (Admin)
         test_user_email = "test@example.com"
         existing_user = crud.get_user_by_email(db, test_user_email)
         if not existing_user:
@@ -41,9 +41,16 @@ def seed_database():
                 password="test123"
             )
             created_user = crud.create_user(db, test_user)
-            print(f"Test kullanıcısı oluşturuldu: {created_user.username}")
+            # Admin yap
+            created_user.is_admin = True
+            db.commit()
+            print(f"Test kullanıcısı (Admin) oluşturuldu: {created_user.username}")
         else:
+            # Mevcut kullanıcıyı admin yap
+            existing_user.is_admin = True
+            db.commit()
             created_user = existing_user
+            print(f"Mevcut kullanıcı admin yapıldı: {created_user.username}")
         
         # Örnek quizler oluştur
         sample_quizzes = [

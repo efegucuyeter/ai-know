@@ -150,6 +150,16 @@
             background-color: #2c5d95;
             color: white;
         }
+        .pagination-btn.disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .pagination-btn.disabled:hover {
+            background-color: #ccc;
+            transform: none;
+        }
         footer {
             color: white;
             padding: 20px 0;
@@ -476,6 +486,8 @@
     <script src="js/api.js"></script>
     <script>
         let leaderboardData = [];
+        let currentPage = 1;
+        let pagination = null;
 
         // Sayfa yüklendiğinde liderlik tablosunu yükle
         document.addEventListener('DOMContentLoaded', async function() {
@@ -488,10 +500,14 @@
             }
         });
 
-        async function loadLeaderboard() {
+        async function loadLeaderboard(page = 1) {
             try {
-                leaderboardData = await LeaderboardAPI.getLeaderboard(10);
+                currentPage = page;
+                const response = await LeaderboardAPI.getLeaderboard(page, 10);
+                leaderboardData = response.leaderboard;
+                pagination = response.pagination;
                 renderLeaderboard();
+                renderPagination();
             } catch (error) {
                 console.error('Liderlik tablosu yüklenemedi:', error);
             }
@@ -504,7 +520,7 @@
             tbody.innerHTML = '';
 
             leaderboardData.forEach((entry, index) => {
-                const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : '';
                 const row = `
                     <tr>
                         <td><span class="rank-number ${rankClass}">${entry.rank}</span></td>
@@ -522,6 +538,48 @@
                 `;
                 tbody.innerHTML += row;
             });
+        }
+
+        function renderPagination() {
+            const paginationContainer = document.querySelector('.pagination-container');
+            if (!paginationContainer || !pagination) return;
+
+            paginationContainer.innerHTML = '';
+
+            // Previous button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = `pagination-btn ${!pagination.has_prev ? 'disabled' : ''}`;
+            prevBtn.innerHTML = '<i class="bi bi-chevron-left"></i>';
+            prevBtn.onclick = () => pagination.has_prev && loadLeaderboard(currentPage - 1);
+            prevBtn.disabled = !pagination.has_prev;
+            paginationContainer.appendChild(prevBtn);
+
+            // Page numbers
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(pagination.total_pages, currentPage + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => loadLeaderboard(i);
+                paginationContainer.appendChild(pageBtn);
+            }
+
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = `pagination-btn ${!pagination.has_next ? 'disabled' : ''}`;
+            nextBtn.innerHTML = '<i class="bi bi-chevron-right"></i>';
+            nextBtn.onclick = () => pagination.has_next && loadLeaderboard(currentPage + 1);
+            nextBtn.disabled = !pagination.has_next;
+            paginationContainer.appendChild(nextBtn);
+
+            // Add info text
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'text-center mt-3';
+            infoDiv.style.color = 'white';
+            infoDiv.innerHTML = `Toplam ${pagination.total_items} kullanıcı - Sayfa ${currentPage}/${pagination.total_pages}`;
+            paginationContainer.appendChild(infoDiv);
         }
 
         async function loadStatistics() {
