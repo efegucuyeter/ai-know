@@ -10,6 +10,7 @@
         body {
             background: #578FCA;
             background: radial-gradient(circle, rgba(87, 143, 202, 1) 53%, rgba(148, 187, 233, 1) 100%);
+            background-attachment: fixed;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -19,33 +20,60 @@
             flex: 1;
             padding-bottom: 100px;
         }
-        .navbar-custom, footer {
-            background-color: #3674B5 !important;
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand, .nav-link {
+            color: #3674B5 !important;
+            font-weight: 600;
+        }
+        .navbar-toggler {
+            border-color: #3674B5;
+        }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%233674B5' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        .nav-link.active {
+            color: #2c5d95 !important;
+            background: rgba(54, 116, 181, 0.1);
+            border-radius: 8px;
         }
         .page-title {
-            color: #2c5d95;
+            color: white;
             text-align: center;
             margin: 40px 0;
             font-weight: bold;
+            font-size: 3rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
         .leaderboard-container {
-            background: rgba(0, 51, 102, 0.2);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 40px;
             margin: 50px auto;
             max-width: 900px;
-            color: white;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            color: #2c5d95;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
         .leaderboard-header {
             text-align: center;
             margin-bottom: 30px;
         }
         .leaderboard-title {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            color: #3674B5;
+        }
+        .leaderboard-header p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 0;
         }
         .leaderboard-filters {
             display: flex;
@@ -59,42 +87,61 @@
             gap: 10px;
             align-items: center;
         }
+        .filter-group label {
+            color: #2c5d95;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
         .filter-select {
-            background-color: #4D8AD3;
+            background: linear-gradient(135deg, #3674B5, #2c5d95);
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(54, 116, 181, 0.3);
         }
         .filter-select option {
-            background-color: #4D8AD3;
+            background-color: #3674B5;
             color: white;
         }
         .table-container {
-            background-color: #4D8AD3;
-            border-radius: 10px;
-            padding: 5px;
+            background: rgba(54, 116, 181, 0.1);
+            border-radius: 15px;
+            padding: 8px;
             overflow-x: auto;
+            border: 1px solid rgba(54, 116, 181, 0.2);
         }
         .leaderboard-table {
             width: 100%;
-            color: white;
+            color: #2c5d95;
             border-collapse: separate;
             border-spacing: 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
         }
         .leaderboard-table th {
-            background-color: #2c5d95;
-            padding: 15px;
+            background: linear-gradient(135deg, #3674B5, #2c5d95);
+            color: white;
+            padding: 18px;
             text-align: center;
-            border-bottom: 2px solid white;
+            font-weight: 600;
+            font-size: 1rem;
         }
         .leaderboard-table td {
-            padding: 15px;
+            padding: 18px;
             text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(54, 116, 181, 0.1);
+            background: white;
+            color: #2c5d95;
+            font-weight: 500;
         }
         .leaderboard-table tbody tr:hover {
-            background-color: #336699;
+            background: rgba(54, 116, 181, 0.05);
+        }
+        .leaderboard-table tbody tr:hover td {
+            color: #1e4a73;
         }
         .rank-number {
             font-size: 1.2rem;
@@ -126,45 +173,67 @@
             text-align: left;
             padding-left: 20px;
         }
+        .user-profile span {
+            color: #2c5d95;
+            font-weight: 600;
+            font-size: 1rem;
+        }
         .pagination-container {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             margin-top: 30px;
         }
+        .pagination-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
         .pagination-btn {
-            background-color: white;
+            background: rgba(255, 255, 255, 0.9);
             color: #3674B5;
-            border: none;
-            padding: 10px 15px;
+            border: 2px solid rgba(54, 116, 181, 0.2);
+            padding: 12px 18px;
             margin: 0 5px;
-            border-radius: 8px;
-            font-weight: bold;
+            border-radius: 10px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
         .pagination-btn:hover {
-            background-color: #f0f0f0;
+            background: #3674B5;
+            color: white;
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(54, 116, 181, 0.3);
         }
         .pagination-btn.active {
-            background-color: #2c5d95;
+            background: linear-gradient(135deg, #3674B5, #2c5d95);
             color: white;
+            border-color: #3674B5;
+            box-shadow: 0 4px 15px rgba(54, 116, 181, 0.3);
         }
         .pagination-btn.disabled {
-            background-color: #ccc;
-            color: #666;
+            background: rgba(200, 200, 200, 0.5);
+            color: #999;
             cursor: not-allowed;
             opacity: 0.6;
+            border-color: rgba(200, 200, 200, 0.3);
         }
         .pagination-btn.disabled:hover {
-            background-color: #ccc;
+            background: rgba(200, 200, 200, 0.5);
+            color: #999;
             transform: none;
+            box-shadow: none;
         }
         footer {
-            color: white;
-            padding: 20px 0;
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            color: #3674B5;
+            padding: 30px 0;
             margin-top: auto;
             width: 100%;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
         }
         .footer-container {
             max-width: 1200px;
@@ -175,48 +244,58 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 20px;
+            margin-bottom: 25px;
         }
         .footer-box {
-            background-color: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 8px;
+            background: rgba(54, 116, 181, 0.1);
+            padding: 20px;
+            border-radius: 15px;
             flex: 1;
             min-width: 200px;
             text-align: center;
+            border: 1px solid rgba(54, 116, 181, 0.2);
         }
         .footer-box h5 {
-            color: #0f3762;
-            margin-bottom: 10px;
-            font-size: 1rem;
+            color: #3674B5;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
         }
         .footer-box p {
-            color: #ecf0f1;
+            color: #666;
             margin-bottom: 0;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
         .footer-links {
             text-align: center;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            border-top: 1px solid rgba(54, 116, 181, 0.2);
         }
         .footer-links p {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            color: #666;
         }
         .footer-links a {
             color: #3674B5;
             text-decoration: none;
-            margin: 0 8px;
+            margin: 0 10px;
+            font-weight: 500;
+            transition: all 0.3s;
         }
         .footer-links a:hover {
+            color: #2c5d95;
             text-decoration: underline;
         }
         .badge-score {
-            background-color: #2c5d95;
-            padding: 5px 10px;
+            background: linear-gradient(135deg, #3674B5, #2c5d95);
+            color: white;
+            padding: 8px 12px;
             border-radius: 15px;
             font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 8px rgba(54, 116, 181, 0.3);
         }
         @media (max-width: 768px) {
             .leaderboard-filters {
@@ -254,10 +333,11 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav">
                             <li class="nav-item"><a class="nav-link" href="quiz.html">Testler</a></li>
-                            <li class="nav-item"><a class="nav-link active" href="#">Liderlik Tablosu</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="leader_borad.html">Liderlik Tablosu</a></li>
+                            <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
+                            <li class="nav-item"><a class="nav-link" href="create_quiz.html">Test Oluştur</a></li>
                         </ul>
                         <ul class="navbar-nav ms-auto">
-                            <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
                             <li class="nav-item"><a class="nav-link" href="#" onclick="AuthAPI.logout()">Çıkış Yap</a></li>
                         </ul>
                     </div>
@@ -446,13 +526,7 @@
                 </div>
                 
                 <div class="pagination-container">
-                    <button class="pagination-btn"><i class="bi bi-chevron-left"></i></button>
-                    <button class="pagination-btn active">1</button>
-                    <button class="pagination-btn">2</button>
-                    <button class="pagination-btn">3</button>
-                    <button class="pagination-btn">4</button>
-                    <button class="pagination-btn">5</button>
-                    <button class="pagination-btn"><i class="bi bi-chevron-right"></i></button>
+                    <!-- Pagination buttons will be dynamically generated here -->
                 </div>
             </div>
         </div>
@@ -544,7 +618,12 @@
             const paginationContainer = document.querySelector('.pagination-container');
             if (!paginationContainer || !pagination) return;
 
+            // Clear the entire container first
             paginationContainer.innerHTML = '';
+
+            // Create buttons wrapper
+            const buttonsWrapper = document.createElement('div');
+            buttonsWrapper.className = 'pagination-buttons';
 
             // Previous button
             const prevBtn = document.createElement('button');
@@ -552,7 +631,7 @@
             prevBtn.innerHTML = '<i class="bi bi-chevron-left"></i>';
             prevBtn.onclick = () => pagination.has_prev && loadLeaderboard(currentPage - 1);
             prevBtn.disabled = !pagination.has_prev;
-            paginationContainer.appendChild(prevBtn);
+            buttonsWrapper.appendChild(prevBtn);
 
             // Page numbers
             const startPage = Math.max(1, currentPage - 2);
@@ -563,7 +642,7 @@
                 pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
                 pageBtn.textContent = i;
                 pageBtn.onclick = () => loadLeaderboard(i);
-                paginationContainer.appendChild(pageBtn);
+                buttonsWrapper.appendChild(pageBtn);
             }
 
             // Next button
@@ -572,12 +651,22 @@
             nextBtn.innerHTML = '<i class="bi bi-chevron-right"></i>';
             nextBtn.onclick = () => pagination.has_next && loadLeaderboard(currentPage + 1);
             nextBtn.disabled = !pagination.has_next;
-            paginationContainer.appendChild(nextBtn);
+            buttonsWrapper.appendChild(nextBtn);
 
-            // Add info text
+            // Add buttons wrapper to container
+            paginationContainer.appendChild(buttonsWrapper);
+
+            // Add info text below navigation buttons (only once)
             const infoDiv = document.createElement('div');
-            infoDiv.className = 'text-center mt-3';
-            infoDiv.style.color = 'white';
+            infoDiv.className = 'pagination-info text-center';
+            infoDiv.style.color = '#2c5d95';
+            infoDiv.style.fontWeight = '600';
+            infoDiv.style.fontSize = '0.95rem';
+            infoDiv.style.padding = '12px 20px';
+            infoDiv.style.background = 'rgba(54, 116, 181, 0.1)';
+            infoDiv.style.borderRadius = '10px';
+            infoDiv.style.border = '1px solid rgba(54, 116, 181, 0.2)';
+            infoDiv.style.marginTop = '15px';
             infoDiv.innerHTML = `Toplam ${pagination.total_items} kullanıcı - Sayfa ${currentPage}/${pagination.total_pages}`;
             paginationContainer.appendChild(infoDiv);
         }

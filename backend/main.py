@@ -76,11 +76,58 @@ def update_user_profile(
 ):
     return crud.update_user(db=db, user_id=current_user.id, user_update=user_update)
 
+@app.post("/api/auth/change-password")
+def change_password(
+    password_request: schemas.PasswordChangeRequest,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_current_user)
+):
+    result = crud.change_user_password(
+        db=db,
+        user_id=current_user.id,
+        current_password=password_request.current_password,
+        new_password=password_request.new_password
+    )
+    
+    if result is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    elif result is False:
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    else:
+        return {"message": "Password changed successfully"}
+
 # Category endpoints
-@app.get("/api/categories", response_model=List[schemas.Category])
+@app.get("/api/categories", response_model=List[schemas.CategoryWithCount])
 def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    categories = crud.get_categories(db, skip=skip, limit=limit)
-    return categories
+    categories = crud.get_categories_with_quiz_counts(db, skip=skip, limit=limit)
+    
+    # Convert to list and add flag category
+    categories_list = []
+    
+    # Normal kategorileri ekle
+    for cat in categories:
+        category_with_count = schemas.CategoryWithCount(
+            id=cat.id,
+            name=cat.name,
+            description=cat.description,
+            image_url=cat.image_url,
+            quiz_count=cat.quiz_count
+        )
+        categories_list.append(category_with_count)
+    
+    # Bayraklar kategorisini ekle (eğer zaten yoksa)
+    if not any(cat.id == 999 for cat in categories_list):
+        # Bayrak quiz sayısını hesapla (şu anda 1 tane var)
+        flag_category = schemas.CategoryWithCount(
+            id=999,
+            name="Bayraklar",
+            description="Dünya ülkelerinin bayraklarını tanıma quizleri",
+            image_url="https://flagcdn.com/w320/tr.png",
+            quiz_count=1  # Flag quiz
+        )
+        categories_list.insert(0, flag_category)
+    
+    return categories_list
 
 @app.post("/api/categories", response_model=schemas.Category)
 def create_category(
@@ -117,6 +164,23 @@ def read_quizzes(
             "creator_username": quiz.creator_username
         }
         formatted_quizzes.append(formatted_quiz)
+    
+    # Bayrak Quiz'ini her zaman en başa ekle (eğer kategori filtresi yoksa veya bayrak kategorisi seçiliyse)
+    if category_id is None or category_id == 999:
+        flag_quiz = {
+            "id": "flag_quiz",
+            "title": "🏳️ Dünya Bayrakları Quiz",
+            "description": "10 soruluk bayrak tanıma testi. Her doğru cevap 10 puan değerinde.",
+            "difficulty": "Orta",
+            "image_url": "https://flagcdn.com/w320/tr.png",
+            "category": {
+                "id": 999,
+                "name": "Bayraklar"
+            },
+            "question_count": 10,
+            "creator_username": "Ahmet Yılmaz"
+        }
+        formatted_quizzes.insert(0, flag_quiz)
     
     return formatted_quizzes
 
@@ -190,8 +254,276 @@ def generate_ai_questions(
         category=request.category,
         difficulty=request.difficulty,
         question_count=request.question_count,
-        topic=request.topic
+        topic=request.topic,
+        language=getattr(request, 'language', 'tr')  # Default to Turkish if not provided
     )
+
+# Flag Quiz endpoints
+@app.get("/api/flag-quiz")
+def get_flag_quiz():
+    """Get the flag quiz"""
+    return {
+        "id": "flag_quiz",
+        "title": "Bayrak Quiz",
+        "description": "10 soruluk bayrak quiz'i. Her doğru cevap 10 puan değerinde.",
+        "difficulty": "Orta",
+        "image_url": "https://flagcdn.com/w320/tr.png",
+        "category": {
+            "id": 999,
+            "name": "Bayraklar"
+        },
+        "question_count": 10,
+        "creator_username": "System",
+        "time_limit": 300
+    }
+
+@app.post("/api/flag-quiz/start")
+def start_flag_quiz(current_user: schemas.User = Depends(get_current_user)):
+    """Start a new flag quiz session"""
+    import random
+    
+    countries = [
+        {"code": "AF", "name": "Afghanistan"},
+        {"code": "AL", "name": "Albania"},
+        {"code": "DZ", "name": "Algeria"},
+        {"code": "AR", "name": "Argentina"},
+        {"code": "AM", "name": "Armenia"},
+        {"code": "AU", "name": "Australia"},
+        {"code": "AT", "name": "Austria"},
+        {"code": "AZ", "name": "Azerbaijan"},
+        {"code": "BS", "name": "Bahamas"},
+        {"code": "BH", "name": "Bahrain"},
+        {"code": "BD", "name": "Bangladesh"},
+        {"code": "BB", "name": "Barbados"},
+        {"code": "BY", "name": "Belarus"},
+        {"code": "BE", "name": "Belgium"},
+        {"code": "BZ", "name": "Belize"},
+        {"code": "BJ", "name": "Benin"},
+        {"code": "BT", "name": "Bhutan"},
+        {"code": "BO", "name": "Bolivia"},
+        {"code": "BA", "name": "Bosnia and Herzegovina"},
+        {"code": "BW", "name": "Botswana"},
+        {"code": "BR", "name": "Brazil"},
+        {"code": "BN", "name": "Brunei"},
+        {"code": "BG", "name": "Bulgaria"},
+        {"code": "BF", "name": "Burkina Faso"},
+        {"code": "BI", "name": "Burundi"},
+        {"code": "KH", "name": "Cambodia"},
+        {"code": "CM", "name": "Cameroon"},
+        {"code": "CA", "name": "Canada"},
+        {"code": "CV", "name": "Cape Verde"},
+        {"code": "CF", "name": "Central African Republic"},
+        {"code": "TD", "name": "Chad"},
+        {"code": "CL", "name": "Chile"},
+        {"code": "CN", "name": "China"},
+        {"code": "CO", "name": "Colombia"},
+        {"code": "KM", "name": "Comoros"},
+        {"code": "CG", "name": "Congo"},
+        {"code": "CR", "name": "Costa Rica"},
+        {"code": "HR", "name": "Croatia"},
+        {"code": "CU", "name": "Cuba"},
+        {"code": "CY", "name": "Cyprus"},
+        {"code": "CZ", "name": "Czech Republic"},
+        {"code": "DK", "name": "Denmark"},
+        {"code": "DJ", "name": "Djibouti"},
+        {"code": "DM", "name": "Dominica"},
+        {"code": "DO", "name": "Dominican Republic"},
+        {"code": "EC", "name": "Ecuador"},
+        {"code": "EG", "name": "Egypt"},
+        {"code": "SV", "name": "El Salvador"},
+        {"code": "GQ", "name": "Equatorial Guinea"},
+        {"code": "ER", "name": "Eritrea"},
+        {"code": "EE", "name": "Estonia"},
+        {"code": "ET", "name": "Ethiopia"},
+        {"code": "FJ", "name": "Fiji"},
+        {"code": "FI", "name": "Finland"},
+        {"code": "FR", "name": "France"},
+        {"code": "GA", "name": "Gabon"},
+        {"code": "GM", "name": "Gambia"},
+        {"code": "GE", "name": "Georgia"},
+        {"code": "DE", "name": "Germany"},
+        {"code": "GH", "name": "Ghana"},
+        {"code": "GR", "name": "Greece"},
+        {"code": "GD", "name": "Grenada"},
+        {"code": "GT", "name": "Guatemala"},
+        {"code": "GN", "name": "Guinea"},
+        {"code": "GW", "name": "Guinea-Bissau"},
+        {"code": "GY", "name": "Guyana"},
+        {"code": "HT", "name": "Haiti"},
+        {"code": "HN", "name": "Honduras"},
+        {"code": "HU", "name": "Hungary"},
+        {"code": "IS", "name": "Iceland"},
+        {"code": "IN", "name": "India"},
+        {"code": "ID", "name": "Indonesia"},
+        {"code": "IR", "name": "Iran"},
+        {"code": "IQ", "name": "Iraq"},
+        {"code": "IE", "name": "Ireland"},
+        {"code": "IL", "name": "Israel"},
+        {"code": "IT", "name": "Italy"},
+        {"code": "JM", "name": "Jamaica"},
+        {"code": "JP", "name": "Japan"},
+        {"code": "JO", "name": "Jordan"},
+        {"code": "KZ", "name": "Kazakhstan"},
+        {"code": "KE", "name": "Kenya"},
+        {"code": "KI", "name": "Kiribati"},
+        {"code": "KP", "name": "North Korea"},
+        {"code": "KR", "name": "South Korea"},
+        {"code": "KW", "name": "Kuwait"},
+        {"code": "KG", "name": "Kyrgyzstan"},
+        {"code": "LA", "name": "Laos"},
+        {"code": "LV", "name": "Latvia"},
+        {"code": "LB", "name": "Lebanon"},
+        {"code": "LS", "name": "Lesotho"},
+        {"code": "LR", "name": "Liberia"},
+        {"code": "LY", "name": "Libya"},
+        {"code": "LI", "name": "Liechtenstein"},
+        {"code": "LT", "name": "Lithuania"},
+        {"code": "LU", "name": "Luxembourg"},
+        {"code": "MG", "name": "Madagascar"},
+        {"code": "MW", "name": "Malawi"},
+        {"code": "MY", "name": "Malaysia"},
+        {"code": "MV", "name": "Maldives"},
+        {"code": "ML", "name": "Mali"},
+        {"code": "MT", "name": "Malta"},
+        {"code": "MH", "name": "Marshall Islands"},
+        {"code": "MR", "name": "Mauritania"},
+        {"code": "MU", "name": "Mauritius"},
+        {"code": "MX", "name": "Mexico"},
+        {"code": "FM", "name": "Micronesia"},
+        {"code": "MD", "name": "Moldova"},
+        {"code": "MC", "name": "Monaco"},
+        {"code": "MN", "name": "Mongolia"},
+        {"code": "ME", "name": "Montenegro"},
+        {"code": "MA", "name": "Morocco"},
+        {"code": "MZ", "name": "Mozambique"},
+        {"code": "MM", "name": "Myanmar"},
+        {"code": "NA", "name": "Namibia"},
+        {"code": "NR", "name": "Nauru"},
+        {"code": "NP", "name": "Nepal"},
+        {"code": "NL", "name": "Netherlands"},
+        {"code": "NZ", "name": "New Zealand"},
+        {"code": "NI", "name": "Nicaragua"},
+        {"code": "NE", "name": "Niger"},
+        {"code": "NG", "name": "Nigeria"},
+        {"code": "NO", "name": "Norway"},
+        {"code": "OM", "name": "Oman"},
+        {"code": "PK", "name": "Pakistan"},
+        {"code": "PW", "name": "Palau"},
+        {"code": "PA", "name": "Panama"},
+        {"code": "PG", "name": "Papua New Guinea"},
+        {"code": "PY", "name": "Paraguay"},
+        {"code": "PE", "name": "Peru"},
+        {"code": "PH", "name": "Philippines"},
+        {"code": "PL", "name": "Poland"},
+        {"code": "PT", "name": "Portugal"},
+        {"code": "QA", "name": "Qatar"},
+        {"code": "RO", "name": "Romania"},
+        {"code": "RU", "name": "Russia"},
+        {"code": "RW", "name": "Rwanda"},
+        {"code": "WS", "name": "Samoa"},
+        {"code": "SM", "name": "San Marino"},
+        {"code": "ST", "name": "Sao Tome and Principe"},
+        {"code": "SA", "name": "Saudi Arabia"},
+        {"code": "SN", "name": "Senegal"},
+        {"code": "RS", "name": "Serbia"},
+        {"code": "SC", "name": "Seychelles"},
+        {"code": "SL", "name": "Sierra Leone"},
+        {"code": "SG", "name": "Singapore"},
+        {"code": "SK", "name": "Slovakia"},
+        {"code": "SI", "name": "Slovenia"},
+        {"code": "SB", "name": "Solomon Islands"},
+        {"code": "SO", "name": "Somalia"},
+        {"code": "ZA", "name": "South Africa"},
+        {"code": "SS", "name": "South Sudan"},
+        {"code": "ES", "name": "Spain"},
+        {"code": "LK", "name": "Sri Lanka"},
+        {"code": "SD", "name": "Sudan"},
+        {"code": "SR", "name": "Suriname"},
+        {"code": "SE", "name": "Sweden"},
+        {"code": "CH", "name": "Switzerland"},
+        {"code": "SY", "name": "Syria"},
+        {"code": "TW", "name": "Taiwan"},
+        {"code": "TJ", "name": "Tajikistan"},
+        {"code": "TZ", "name": "Tanzania"},
+        {"code": "TH", "name": "Thailand"},
+        {"code": "TL", "name": "Timor-Leste"},
+        {"code": "TG", "name": "Togo"},
+        {"code": "TO", "name": "Tonga"},
+        {"code": "TT", "name": "Trinidad and Tobago"},
+        {"code": "TN", "name": "Tunisia"},
+        {"code": "TR", "name": "Turkey"},
+        {"code": "TM", "name": "Turkmenistan"},
+        {"code": "TV", "name": "Tuvalu"},
+        {"code": "UG", "name": "Uganda"},
+        {"code": "UA", "name": "Ukraine"},
+        {"code": "AE", "name": "United Arab Emirates"},
+        {"code": "GB", "name": "United Kingdom"},
+        {"code": "US", "name": "United States"},
+        {"code": "UY", "name": "Uruguay"},
+        {"code": "UZ", "name": "Uzbekistan"},
+        {"code": "VU", "name": "Vanuatu"},
+        {"code": "VE", "name": "Venezuela"},
+        {"code": "VN", "name": "Vietnam"},
+        {"code": "YE", "name": "Yemen"},
+        {"code": "ZM", "name": "Zambia"},
+        {"code": "ZW", "name": "Zimbabwe"}
+    ]
+    
+    # 10 rastgele ülke seç
+    selected_countries = random.sample(countries, 10)
+    
+    questions = []
+    for i, correct_country in enumerate(selected_countries):
+        # Her soru için 4 seçenek oluştur (1 doğru + 3 yanlış)
+        other_countries = [c for c in countries if c["code"] != correct_country["code"]]
+        wrong_options = random.sample(other_countries, 3)
+        
+        options = [correct_country] + wrong_options
+        random.shuffle(options)
+        
+        questions.append({
+            "question_id": i + 1,
+            "flag_url": f"https://flagcdn.com/w320/{correct_country['code'].lower()}.png",
+            "correct_answer": correct_country["name"],
+            "options": [country["name"] for country in options],
+            "correct_country_code": correct_country["code"]
+        })
+    
+    return {
+        "quiz_id": f"flag_quiz_{current_user.id}_{random.randint(1000, 9999)}",
+        "questions": questions,
+        "total_questions": 10,
+        "time_limit": 300  # 5 dakika (30 saniye * 10 soru)
+    }
+
+@app.post("/api/flag-quiz/submit")
+def submit_flag_quiz(
+    quiz_data: dict,
+    current_user: schemas.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Submit flag quiz results"""
+    answers = quiz_data.get("answers", [])
+    time_taken = quiz_data.get("time_taken", 0)
+    
+    correct_count = 0
+    total_score = 0
+    
+    for answer in answers:
+        if answer.get("is_correct", False):
+            correct_count += 1
+            total_score += 10  # Her doğru cevap 10 puan
+    
+    # Kullanıcı istatistiklerini güncelle
+    crud.update_user_stats(db, current_user.id, total_score)
+    
+    return {
+        "score": total_score,
+        "correct_answers": correct_count,
+        "total_questions": len(answers),
+        "time_taken": time_taken,
+        "percentage": (correct_count / len(answers)) * 100 if answers else 0
+    }
 
 # Admin endpoints
 @app.get("/api/admin/users", response_model=schemas.PaginatedUsers)

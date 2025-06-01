@@ -25,6 +25,8 @@ async function apiCall(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const token = TokenManager.getToken();
     
+    console.log('apiCall called:', { endpoint, url, hasToken: !!token });
+    
     const defaultOptions = {
         headers: {
             'Content-Type': 'application/json',
@@ -44,11 +46,17 @@ async function apiCall(endpoint, options = {}) {
         }
     };
     
+    console.log('Final request options:', finalOptions);
+
     try {
+        console.log('Making fetch request...');
         const response = await fetch(url, finalOptions);
+        
+        console.log('Response received:', { status: response.status, ok: response.ok });
         
         if (!response.ok) {
             if (response.status === 401) {
+                console.log('401 Unauthorized - removing token');
                 TokenManager.removeToken();
                 window.location.href = 'login.html';
                 return;
@@ -56,7 +64,9 @@ async function apiCall(endpoint, options = {}) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        return await response.json();
+        const result = await response.json();
+        console.log('Response JSON:', result);
+        return result;
     } catch (error) {
         console.error('API call failed:', error);
         throw error;
@@ -100,6 +110,17 @@ class AuthAPI {
         return await apiCall('/auth/me', {
             method: 'PUT',
             body: JSON.stringify(updateData)
+        });
+    }
+    
+    static async changePassword(currentPassword, newPassword) {
+        console.log('AuthAPI.changePassword called');
+        return await apiCall('/auth/change-password', {
+            method: 'POST',
+            body: JSON.stringify({
+                current_password: currentPassword,
+                new_password: newPassword
+            })
         });
     }
     
@@ -183,14 +204,15 @@ class StatisticsAPI {
 
 // AI API
 class AIAPI {
-    static async generateQuestions(category, difficulty, questionCount, topic = null) {
+    static async generateQuestions(category, difficulty, questionCount, topic = null, language = 'tr') {
         return await apiCall('/ai/generate-questions', {
             method: 'POST',
             body: JSON.stringify({
                 category,
                 difficulty,
                 question_count: questionCount,
-                topic
+                topic,
+                language
             })
         });
     }
@@ -234,6 +256,25 @@ class AdminAPI {
     
     static async getAdminStatistics() {
         return await apiCall('/admin/statistics');
+    }
+}
+
+// Flag Quiz API
+class FlagQuizAPI {
+    static async startFlagQuiz() {
+        return await apiCall('/flag-quiz/start', {
+            method: 'POST'
+        });
+    }
+    
+    static async submitFlagQuiz(answers, timeTaken) {
+        return await apiCall('/flag-quiz/submit', {
+            method: 'POST',
+            body: JSON.stringify({
+                answers,
+                time_taken: timeTaken
+            })
+        });
     }
 }
 

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Test Oluştur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: #578FCA;
+            background: radial-gradient(circle, rgba(87, 143, 202, 1) 53%, rgba(148, 187, 233, 1) 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex: 1;
+            padding-bottom: 50px;
+        }
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand, .nav-link {
+            color: #3674B5 !important;
+            font-weight: 600;
+        }
+        .navbar-toggler {
+            border-color: #3674B5;
+        }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%233674B5' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        .page-title {
+            color: white;
+            text-align: center;
+            margin: 40px 0;
+            font-weight: bold;
+            font-size: 3rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .create-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            color: #2c5d95;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .quiz-form {
+            background: rgba(54, 116, 181, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(54, 116, 181, 0.2);
+        }
+        .form-control, .form-select {
+            background-color: rgba(54, 116, 181, 0.1);
+            border: 2px solid rgba(54, 116, 181, 0.2);
+            color: #2c5d95;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(54, 116, 181, 0.15);
+            border-color: #3674B5;
+            color: #2c5d95;
+            box-shadow: 0 0 0 0.2rem rgba(54, 116, 181, 0.25);
+        }
+        .form-control::placeholder {
+            color: rgba(44, 93, 149, 0.6);
+        }
+        .form-select option {
+            background-color: white;
+            color: #2c5d95;
+        }
+        .question-item {
+            background: rgba(54, 116, 181, 0.15);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(54, 116, 181, 0.3);
+        }
+        .option-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .option-input input[type="text"] {
+            flex: 1;
+            margin-right: 15px;
+            margin-bottom: 0;
+        }
+        .option-input input[type="radio"] {
+            margin-right: 15px;
+            accent-color: #3674B5;
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-right: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        .btn-add:hover {
+            background: linear-gradient(135deg, #20c997, #17a2b8);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        .btn-remove {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+        .btn-remove:hover {
+            background: linear-gradient(135deg, #c82333, #a71e2a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        }
+        .btn-create-quiz {
+            background: linear-gradient(135deg, #3674B5, #2c5d95);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(54, 116, 181, 0.3);
+        }
+        .btn-create-quiz:hover {
+            background: linear-gradient(135deg, #2c5d95, #1e4a73);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(54, 116, 181, 0.4);
+        }
+        .ai-loading {
+            text-align: center;
+            padding: 40px;
+            color: #2c5d95;
+        }
+        .ai-loading i {
+            font-size: 3rem;
+            animation: spin 1s linear infinite;
+            color: #3674B5;
+            margin-bottom: 20px;
+        }
+        .ai-loading p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .ai-loading small {
+            color: #666;
+            font-style: italic;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .ai-question-card {
+            background: rgba(54, 116, 181, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(54, 116, 181, 0.2);
+        }
+        .ai-question-card h6 {
+            color: #3674B5;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .ai-option {
+            padding: 8px 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(54, 116, 181, 0.2);
+        }
+        .ai-option.correct {
+            background: rgba(40, 167, 69, 0.2);
+            border-color: #28a745;
+            font-weight: 600;
+        }
+        .section-header {
+            background: linear-gradient(135deg, #3674B5, #2c5d95);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(54, 116, 181, 0.3);
+        }
+        .section-header h4 {
+            margin: 0;
+            font-weight: bold;
+        }
+        .section-header small {
+            opacity: 0.9;
+        }
+        .nav-pills .nav-link {
+            color: #3674B5;
+            background: rgba(54, 116, 181, 0.1);
+            border-radius: 25px;
+            margin-right: 15px;
+            padding: 12px 25px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(54, 116, 181, 0.2);
+        }
+        .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, #3674B5, #2c5d95);
+            color: white;
+            box-shadow: 0 4px 15px rgba(54, 116, 181, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="container">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mt-3 rounded">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="index.html">Ana Sayfa</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="quiz.html">Testler</a></li>
+                            <li class="nav-item"><a class="nav-link" href="leader_borad.html">Liderlik Tablosu</a></li>
+                            <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="create_quiz.html">Test Oluştur</a></li>
+                        </ul>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="AuthAPI.logout()">Çıkış Yap</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- Page Title -->
+            <h2 class="page-title">📝 Test Oluştur</h2>
+            
+            <!-- Create Quiz Tabs -->
+            <div class="create-card">
+                <ul class="nav nav-pills mb-4" id="createTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="ai-create-tab" data-bs-toggle="pill" data-bs-target="#ai-create" type="button" role="tab">
+                            <i class="bi bi-magic me-2"></i>AI ile Oluştur
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="manual-create-tab" data-bs-toggle="pill" data-bs-target="#manual-create" type="button" role="tab">
+                            <i class="bi bi-pencil-square me-2"></i>Manuel Oluştur
+                        </button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="createTabsContent">
+                    <!-- AI Create Tab -->
+                    <div class="tab-pane fade show active" id="ai-create" role="tabpanel">
+                        <!-- AI Soru Oluşturma Bölümü -->
+                        <div class="section-header">
+                            <h4>🤖 AI ile Soru Oluştur</h4>
+                            <small>Yapay zeka ile otomatik olarak kaliteli sorular oluşturun</small>
+                        </div>
+                        
+                        <div class="quiz-form">
+                            <form id="aiQuestionForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Kategori</label>
+                                        <select class="form-select" id="aiCategory" required>
+                                            
+                                            <!-- Kategoriler dinamik olarak yüklenecek -->
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Dil</label>
+                                        <select class="form-select" id="aiLanguage" required>
+                                            <option value="">Dil seçin</option>
+                                            <option value="tr">🇹🇷 Türkçe</option>
+                                            <option value="en">🇺🇸 English</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Zorluk Seviyesi</label>
+                                        <select class="form-select" id="aiDifficulty" required>
+                                            <option value="">Zorluk seçin</option>
+                                            <option value="Kolay">Kolay</option>
+                                            <option value="Orta">Orta</option>
+                                            <option value="Zor">Zor</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Soru Sayısı</label>
+                                        <input type="number" class="form-control" id="aiQuestionCount" placeholder="5" min="1" max="20" value="5" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Konu (Opsiyonel)</label>
+                                        <input type="text" class="form-control" id="aiTopic" placeholder="Örn: Python fonksiyonları, Matematik işlemleri, İngilizce zamanlar">
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-create-quiz">
+                                        <i class="bi bi-magic"></i> AI ile Soru Oluştur
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- AI Sonuçları -->
+                        <div id="aiQuestionsResult" style="display: none;" class="quiz-form">
+                            <h5 class="mb-3">🎯 Oluşturulan Sorular</h5>
+                            <div id="aiGeneratedQuestions"></div>
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-create-quiz" onclick="useAIQuestions()">
+                                    <i class="bi bi-check-circle"></i> Bu Soruları Kullan
+                                </button>
+                                <button type="button" class="btn btn-secondary ms-2" onclick="clearAIQuestions()">
+                                    <i class="bi bi-x-circle"></i> Temizle
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Manual Create Tab -->
+                    <div class="tab-pane fade" id="manual-create" role="tabpanel">
+                        <div class="section-header">
+                            <h4>📝 Manuel Test Oluştur</h4>
+                            <small>Kendi sorularınızı yazarak özel testler oluşturun</small>
+                        </div>
+                        
+                        <div class="quiz-form">
+                            <form id="createQuizForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Test Başlığı</label>
+                                        <input type="text" class="form-control" id="quizTitle" placeholder="Test başlığını girin" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Kategori</label>
+                                        <select class="form-select" id="quizCategory" required>
+                                            <option value="">Kategori seçin</option>
+                                            <!-- Kategoriler dinamik olarak yüklenecek -->
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Zorluk Seviyesi</label>
+                                        <select class="form-select" id="quizDifficulty" required>
+                                            <option value="">Zorluk seçin</option>
+                                            <option value="Kolay">Kolay</option>
+                                            <option value="Orta">Orta</option>
+                                            <option value="Zor">Zor</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Süre (dakika)</label>
+                                        <input type="number" class="form-control" id="quizTimeLimit" placeholder="5" min="1" max="60" value="5" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Test Açıklaması</label>
+                                    <textarea class="form-control" id="quizDescription" rows="3" placeholder="Test hakkında kısa bir açıklama"></textarea>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Test Banner'ı</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Renk Seçin</label>
+                                            <select class="form-select" id="bannerColor">
+                                                <option value="#2563eb">Mavi</option>
+                                                <option value="#dc2626">Kırmızı</option>
+                                                <option value="#059669">Yeşil</option>
+                                                <option value="#ea580c">Turuncu</option>
+                                                <option value="#7c3aed">Mor</option>
+                                                <option value="#c026d3">Pembe</option>
+                                                <option value="#7c2d12">Kahverengi</option>
+                                                <option value="#374151">Gri</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Veya Görsel URL'si</label>
+                                            <input type="url" class="form-control" id="bannerImageUrl" placeholder="https://example.com/image.jpg">
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div id="bannerPreview" style="width: 100%; height: 100px; background-color: #2563eb; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                            Banner Önizleme
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <h5 class="mb-3">Sorular</h5>
+                                <div id="questionsContainer">
+                                    <!-- Sorular buraya eklenecek -->
+                                </div>
+                                
+                                <button type="button" class="btn btn-add" onclick="addQuestion()">
+                                    <i class="bi bi-plus-circle"></i> Soru Ekle
+                                </button>
+                                
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-create-quiz">
+                                        <i class="bi bi-check-circle"></i> Testi Oluştur
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        let questionCount = 0;
+        let aiGeneratedQuestions = [];
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Kullanıcı kontrolü
+                const currentUser = await AuthAPI.getCurrentUser();
+                if (!currentUser) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                await loadCategories();
+                addQuestion(); // İlk soru ekle
+            } catch (error) {
+                console.error('Sayfa yükleme hatası:', error);
+                showAlert('Sayfa yüklenirken bir hata oluştu.', 'danger');
+            }
+        });
+
+        async function loadCategories() {
+            try {
+                const categories = await CategoriesAPI.getCategories();
+                
+                // AI kategori select'ini doldur
+                const aiCategorySelect = document.getElementById('aiCategory');
+                aiCategorySelect.innerHTML = '<option value="">Kategori seçin</option>';
+                
+                // Geçmiş kategorilerini de ekle
+                const aiDefaultCategories = [
+                    'Matematik', 'Fen Bilgisi', 'Tarih', 'Coğrafya', 'Türkçe', 'İngilizce', 
+                    'Coding', 'Sanat', 'Bilim', 'Hayvanlar', 'Spor', 'Teknoloji',
+                    'Almanca', 'Dünya Tarihi', 'Futbol', 'Genel Kültür', 'Müzik'
+                ];
+                
+                // Önce backend'den gelen kategorileri ekle
+                const aiExistingCategoryNames = categories.map(cat => cat.name);
+                categories.forEach(category => {
+                    aiCategorySelect.innerHTML += `<option value="${category.name}">${category.name}</option>`;
+                });
+                
+                // Sonra eksik olan default kategorileri ekle
+                aiDefaultCategories.forEach(categoryName => {
+                    if (!aiExistingCategoryNames.includes(categoryName)) {
+                        aiCategorySelect.innerHTML += `<option value="${categoryName}">${categoryName}</option>`;
+                    }
+                });
+                
+                // Manuel quiz kategori select'ini doldur
+                const quizCategorySelect = document.getElementById('quizCategory');
+                quizCategorySelect.innerHTML = '<option value="">Kategori seçin</option>';
+                
+                // Backend'den gelen kategorileri ekle
+                categories.forEach(category => {
+                    quizCategorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+                });
+            } catch (error) {
+                console.error('Kategoriler yüklenemedi:', error);
+                // Hata durumunda en azından default kategorileri yükle
+                const aiCategorySelect = document.getElementById('aiCategory');
+                aiCategorySelect.innerHTML = '<option value="">Kategori seçin</option>';
+                const fallbackCategories = [
+                    'Matematik', 'Fen Bilgisi', 'Tarih', 'Coğrafya', 'Türkçe', 'İngilizce', 
+                    'Coding', 'Sanat', 'Bilim', 'Hayvanlar', 'Spor', 'Teknoloji',
+                    'Almanca', 'Dünya Tarihi', 'Futbol', 'Genel Kültür', 'Müzik'
+                ];
+                fallbackCategories.forEach(categoryName => {
+                    aiCategorySelect.innerHTML += `<option value="${categoryName}">${categoryName}</option>`;
+                });
+                
+                // Manuel kategori select'i için de hata durumunda kategorileri yükle
+                const quizCategorySelect = document.getElementById('quizCategory');
+                quizCategorySelect.innerHTML = '<option value="">Kategori seçin</option>';
+                const fallbackManualCategories = [
+                    'Matematik', 'Fen Bilgisi', 'Tarih', 'Coğrafya', 'Türkçe', 'İngilizce', 
+                    'Coding', 'Sanat', 'Bilim', 'Hayvanlar', 'Spor', 'Teknoloji',
+                    'Almanca', 'Dünya Tarihi', 'Futbol', 'Genel Kültür', 'Müzik'
+                ];
+                fallbackManualCategories.forEach((categoryName, index) => {
+                    quizCategorySelect.innerHTML += `<option value="${index + 1}">${categoryName}</option>`;
+                });
+            }
+        }
+
+        function addQuestion() {
+            questionCount++;
+            const questionsContainer = document.getElementById('questionsContainer');
+            
+            const questionHtml = `
+                <div class="question-item" id="question-${questionCount}">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6>Soru ${questionCount}</h6>
+                        <button type="button" class="btn btn-remove" onclick="removeQuestion(${questionCount})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Soru Metni</label>
+                        <textarea class="form-control" name="question_text_${questionCount}" rows="2" placeholder="Sorunuzu yazın" required></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Puan</label>
+                        <input type="number" class="form-control" name="question_points_${questionCount}" value="10" min="1" max="100" required>
+                    </div>
+                    
+                    <label class="form-label">Seçenekler (Doğru cevabı işaretleyin)</label>
+                    <div class="options-container" id="options-${questionCount}">
+                        <div class="option-input">
+                            <input type="radio" name="correct_${questionCount}" value="0" required>
+                            <input type="text" class="form-control" name="option_${questionCount}_0" placeholder="Seçenek A" required>
+                        </div>
+                        <div class="option-input">
+                            <input type="radio" name="correct_${questionCount}" value="1" required>
+                            <input type="text" class="form-control" name="option_${questionCount}_1" placeholder="Seçenek B" required>
+                        </div>
+                        <div class="option-input">
+                            <input type="radio" name="correct_${questionCount}" value="2" required>
+                            <input type="text" class="form-control" name="option_${questionCount}_2" placeholder="Seçenek C" required>
+                        </div>
+                        <div class="option-input">
+                            <input type="radio" name="correct_${questionCount}" value="3" required>
+                            <input type="text" class="form-control" name="option_${questionCount}_3" placeholder="Seçenek D" required>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            questionsContainer.innerHTML += questionHtml;
+        }
+
+        function removeQuestion(questionId) {
+            const questionElement = document.getElementById(`question-${questionId}`);
+            if (questionElement) {
+                questionElement.remove();
+            }
+        }
+
+        // Quiz oluşturma form handler
+        document.getElementById('createQuizForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const questions = [];
+            
+            // Soruları topla
+            for (let i = 1; i <= questionCount; i++) {
+                const questionElement = document.getElementById(`question-${i}`);
+                if (!questionElement) continue;
+                
+                const questionText = formData.get(`question_text_${i}`);
+                const questionPoints = parseInt(formData.get(`question_points_${i}`));
+                const correctAnswer = parseInt(formData.get(`correct_${i}`));
+                
+                if (!questionText) continue;
+                
+                const options = [];
+                for (let j = 0; j < 4; j++) {
+                    const optionText = formData.get(`option_${i}_${j}`);
+                    if (optionText) {
+                        options.push({
+                            option_text: optionText,
+                            is_correct: j === correctAnswer,
+                            order_index: j
+                        });
+                    }
+                }
+                
+                if (options.length === 4) {
+                    questions.push({
+                        question_text: questionText,
+                        question_type: "multiple_choice",
+                        points: questionPoints,
+                        order_index: i - 1,
+                        options: options
+                    });
+                }
+            }
+            
+            if (questions.length === 0) {
+                showAlert('En az bir soru eklemelisiniz!', 'warning');
+                return;
+            }
+            
+            // Banner URL'sini belirle
+            const imageUrl = document.getElementById('bannerImageUrl').value;
+            const color = document.getElementById('bannerColor').value;
+            const bannerUrl = imageUrl || `https://placehold.co/400x320/${color.substring(1)}/ffffff?text=${encodeURIComponent(document.getElementById('quizTitle').value)}`;
+
+            const quizData = {
+                title: document.getElementById('quizTitle').value,
+                description: document.getElementById('quizDescription').value,
+                category_id: parseInt(document.getElementById('quizCategory').value),
+                difficulty: document.getElementById('quizDifficulty').value,
+                time_limit: parseInt(document.getElementById('quizTimeLimit').value) * 60, // dakikayı saniyeye çevir
+                image_url: bannerUrl,
+                questions: questions
+            };
+            
+            try {
+                const createdQuiz = await QuizzesAPI.createQuiz(quizData);
+                showAlert('Test başarıyla oluşturuldu!', 'success');
+                
+                // Formu temizle
+                e.target.reset();
+                document.getElementById('questionsContainer').innerHTML = '';
+                questionCount = 0;
+                addQuestion(); // Yeni bir soru ekle
+                
+                // Banner önizlemeyi sıfırla
+                updateBannerPreview();
+                
+            } catch (error) {
+                console.error('Quiz oluşturma hatası:', error);
+                showAlert('Test oluşturulurken bir hata oluştu.', 'danger');
+            }
+        });
+
+        // AI Soru Oluşturma Form Handler
+        document.getElementById('aiQuestionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const category = document.getElementById('aiCategory').value;
+            const language = document.getElementById('aiLanguage').value;
+            const difficulty = document.getElementById('aiDifficulty').value;
+            const questionCount = parseInt(document.getElementById('aiQuestionCount').value);
+            const topic = document.getElementById('aiTopic').value;
+            
+            // Dil kontrolü
+            if (!language) {
+                showAlert('Lütfen bir dil seçin!', 'warning');
+                return;
+            }
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                // Loading state
+                const loadingText = language === 'tr' ? 
+                    '<i class="bi bi-hourglass-split"></i> AI Soruları Oluşturuyor...' :
+                    '<i class="bi bi-hourglass-split"></i> AI Generating Questions...';
+                    
+                submitBtn.innerHTML = loadingText;
+                submitBtn.disabled = true;
+                
+                // Loading animasyonu göster
+                const resultDiv = document.getElementById('aiQuestionsResult');
+                const container = document.getElementById('aiGeneratedQuestions');
+                
+                const loadingMessage = language === 'tr' ? {
+                    title: 'AI soruları oluşturuyor, lütfen bekleyin...',
+                    subtitle: 'Bu işlem 10-30 saniye sürebilir'
+                } : {
+                    title: 'AI is generating questions, please wait...',
+                    subtitle: 'This process may take 10-30 seconds'
+                };
+                
+                container.innerHTML = `
+                    <div class="ai-loading">
+                        <i class="bi bi-gear-fill"></i>
+                        <p class="mt-3">${loadingMessage.title}</p>
+                        <small>${loadingMessage.subtitle}</small>
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+                
+                const response = await AIAPI.generateQuestions(category, difficulty, questionCount, topic || null, language);
+                
+                if (response.success && response.questions.length > 0) {
+                    aiGeneratedQuestions = response.questions;
+                    displayAIQuestions(response.questions, language);
+                    const successMessage = language === 'tr' ? 
+                        'AI soruları başarıyla oluşturuldu!' : 
+                        'AI questions generated successfully!';
+                    showAlert(successMessage, 'success');
+                } else {
+                    const errorMessage = language === 'tr' ? 
+                        (response.message || 'AI soruları oluşturulamadı.') : 
+                        (response.message || 'AI questions could not be generated.');
+                    showAlert(errorMessage, 'danger');
+                    document.getElementById('aiQuestionsResult').style.display = 'none';
+                }
+                
+            } catch (error) {
+                console.error('AI soru oluşturma hatası:', error);
+                const errorMessage = language === 'tr' ? 
+                    'AI soruları oluşturulurken bir hata oluştu.' : 
+                    'An error occurred while generating AI questions.';
+                showAlert(errorMessage, 'danger');
+                document.getElementById('aiQuestionsResult').style.display = 'none';
+            } finally {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        function displayAIQuestions(questions, language = 'tr') {
+            const container = document.getElementById('aiGeneratedQuestions');
+            container.innerHTML = '';
+            
+            const labels = language === 'tr' ? {
+                question: 'Soru',
+                points: 'Puan'
+            } : {
+                question: 'Question',
+                points: 'Points'
+            };
+            
+            questions.forEach((question, index) => {
+                // AI'dan gelen format: {question: "", options: {A: "", B: "", C: "", D: ""}, correct_answer: "A"}
+                const optionsArray = Object.entries(question.options).map(([key, value]) => ({
+                    key: key,
+                    text: value,
+                    is_correct: key === question.correct_answer
+                }));
+                
+                const questionHtml = `
+                    <div class="ai-question-card">
+                        <h6>${labels.question} ${index + 1}</h6>
+                        <p><strong>${question.question}</strong></p>
+                        <div class="options">
+                            ${optionsArray.map((option) => `
+                                <div class="ai-option ${option.is_correct ? 'correct' : ''}">
+                                    ${option.key}) ${option.text}
+                                    ${option.is_correct ? ' ✓' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <small class="text-muted">${labels.points}: 10</small>
+                    </div>
+                `;
+                container.innerHTML += questionHtml;
+            });
+        }
+
+        function useAIQuestions() {
+            if (aiGeneratedQuestions.length === 0) {
+                const currentLanguage = document.getElementById('aiLanguage').value || 'tr';
+                const message = currentLanguage === 'tr' ? 
+                    'Kullanılacak AI sorusu bulunamadı!' : 
+                    'No AI questions found to use!';
+                showAlert(message, 'warning');
+                return;
+            }
+            
+            // Detect language from form
+            const currentLanguage = document.getElementById('aiLanguage').value || 'tr';
+            
+            // Manuel oluşturma sekmesine geç
+            document.getElementById('manual-create-tab').click();
+            
+            // Mevcut soruları temizle
+            document.getElementById('questionsContainer').innerHTML = '';
+            questionCount = 0;
+            
+            // Language-specific labels
+            const labels = currentLanguage === 'tr' ? {
+                question: 'Soru',
+                ai: 'AI',
+                questionText: 'Soru Metni',
+                points: 'Puan',
+                options: 'Seçenekler (Doğru cevabı işaretleyin)'
+            } : {
+                question: 'Question',
+                ai: 'AI',
+                questionText: 'Question Text',
+                points: 'Points',
+                options: 'Options (Select the correct answer)'
+            };
+            
+            // AI sorularını manuel forma ekle
+            aiGeneratedQuestions.forEach((aiQuestion, index) => {
+                questionCount++;
+                const questionsContainer = document.getElementById('questionsContainer');
+                
+                // AI formatından seçenekleri çıkar
+                const optionsArray = Object.entries(aiQuestion.options).map(([key, value]) => ({
+                    key: key,
+                    text: value,
+                    is_correct: key === aiQuestion.correct_answer
+                }));
+                
+                const questionHtml = `
+                    <div class="question-item" id="question-${questionCount}">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6>${labels.question} ${questionCount} (${labels.ai})</h6>
+                            <button type="button" class="btn btn-remove" onclick="removeQuestion(${questionCount})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">${labels.questionText}</label>
+                            <textarea class="form-control" name="question_text_${questionCount}" rows="2" required>${aiQuestion.question}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">${labels.points}</label>
+                            <input type="number" class="form-control" name="question_points_${questionCount}" value="10" min="1" max="100" required>
+                        </div>
+                        
+                        <label class="form-label">${labels.options}</label>
+                        <div class="options-container" id="options-${questionCount}">
+                            ${optionsArray.map((option, optIndex) => `
+                                <div class="option-input">
+                                    <input type="radio" name="correct_${questionCount}" value="${optIndex}" ${option.is_correct ? 'checked' : ''} required>
+                                    <input type="text" class="form-control" name="option_${questionCount}_${optIndex}" value="${option.text}" required>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                questionsContainer.innerHTML += questionHtml;
+            });
+            
+            const successMessage = currentLanguage === 'tr' ? 
+                'AI soruları manuel forma aktarıldı!' : 
+                'AI questions transferred to manual form!';
+            showAlert(successMessage, 'success');
+            clearAIQuestions();
+        }
+
+        function clearAIQuestions() {
+            aiGeneratedQuestions = [];
+            document.getElementById('aiQuestionsResult').style.display = 'none';
+            document.getElementById('aiQuestionForm').reset();
+        }
+
+        // Banner önizleme
+        document.getElementById('bannerColor').addEventListener('change', updateBannerPreview);
+        document.getElementById('bannerImageUrl').addEventListener('input', updateBannerPreview);
+
+        function updateBannerPreview() {
+            const imageUrl = document.getElementById('bannerImageUrl').value;
+            const color = document.getElementById('bannerColor').value;
+            const title = document.getElementById('quizTitle').value || 'Banner Önizleme';
+            const preview = document.getElementById('bannerPreview');
+            
+            if (imageUrl) {
+                preview.style.backgroundImage = `url(${imageUrl})`;
+                preview.style.backgroundSize = 'cover';
+                preview.style.backgroundPosition = 'center';
+                preview.style.backgroundColor = '';
+                preview.innerHTML = '';
+            } else {
+                preview.style.backgroundImage = '';
+                preview.style.backgroundColor = color;
+                preview.innerHTML = title;
+            }
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 

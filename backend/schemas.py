@@ -31,6 +31,10 @@ class UserUpdate(BaseModel):
     email: Optional[str] = None
     avatar_url: Optional[str] = None
 
+class PasswordChangeRequest(BaseModel):
+    current_password: str
+    new_password: str
+
 # Category Schemas
 class CategoryBase(BaseModel):
     name: str
@@ -42,6 +46,16 @@ class CategoryCreate(CategoryBase):
 
 class Category(CategoryBase):
     id: int
+    
+    class Config:
+        from_attributes = True
+
+class CategoryWithCount(BaseModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    image_url: Optional[str] = None
+    quiz_count: int = 0
     
     class Config:
         from_attributes = True
@@ -184,6 +198,7 @@ class AIQuestionRequest(BaseModel):
     difficulty: str  # Kolay, Orta, Zor
     question_count: int
     topic: Optional[str] = None
+    language: str = "tr"  # tr for Turkish, en for English
 
 class AIGeneratedQuestion(BaseModel):
     question: str

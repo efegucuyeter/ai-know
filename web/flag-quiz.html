@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Quiz Çöz</title>
+    <title>Bayrak Quiz</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
@@ -81,23 +81,13 @@
             padding: 10px 20px;
             border-radius: 25px;
             border: 1px solid rgba(220, 53, 69, 0.2);
-            transition: all 0.3s ease;
-        }
-        .timer.warning {
-            color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.2);
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
         }
         .question-card {
             background: rgba(54, 116, 181, 0.05);
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 20px;
+            text-align: center;
             border: 1px solid rgba(54, 116, 181, 0.1);
         }
         .question-number {
@@ -112,6 +102,19 @@
             line-height: 1.6;
             color: #2c5d95;
             font-weight: 600;
+        }
+        .flag-image {
+            width: 250px;
+            height: auto;
+            border: 3px solid #3674B5;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(54, 116, 181, 0.3);
+            transition: all 0.3s ease;
+        }
+        .flag-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(54, 116, 181, 0.4);
         }
         .option {
             background: rgba(255, 255, 255, 0.8);
@@ -136,6 +139,16 @@
             border-color: #2c5d95;
             color: white;
             box-shadow: 0 4px 15px rgba(54, 116, 181, 0.4);
+        }
+        .option.correct {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            border-color: #1e7e34;
+            color: white;
+        }
+        .option.incorrect {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border-color: #c82333;
+            color: white;
         }
         .navigation {
             display: flex;
@@ -291,6 +304,9 @@
             .quiz-title {
                 font-size: 2rem;
             }
+            .flag-image {
+                width: 200px;
+            }
             .quiz-info {
                 flex-direction: column;
                 gap: 15px;
@@ -298,9 +314,6 @@
             .navigation {
                 flex-direction: column;
                 gap: 15px;
-            }
-            .option {
-                padding: 15px;
             }
         }
     </style>
@@ -311,37 +324,31 @@
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mt-3 rounded">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="index.html">Ana Sayfa</a>
+                    <a class="navbar-brand" href="quiz.html">← Testlere Dön</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav">
-                            <li class="nav-item"><a class="nav-link" href="quiz.html">Testler</a></li>
-                            <li class="nav-item"><a class="nav-link" href="leader_borad.html">Liderlik Tablosu</a></li>
-                            <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
-                            <li class="nav-item"><a class="nav-link" href="create_quiz.html">Test Oluştur</a></li>
-                        </ul>
-                        <ul class="navbar-nav ms-auto">
-                            <li class="nav-item"><span class="navbar-text me-3" id="userInfo">Yükleniyor...</span></li>
-                            <li class="nav-item"><a class="nav-link" href="#" onclick="AuthAPI.logout()">Çıkış Yap</a></li>
-                        </ul>
+                        <div class="navbar-nav ms-auto">
+                            <span class="navbar-text me-3" id="userInfo">Yükleniyor...</span>
+                            <a class="nav-link" href="#" onclick="AuthAPI.logout()">Çıkış Yap</a>
+                        </div>
                     </div>
                 </div>
             </nav>
-            
+
             <!-- Quiz Container -->
             <div class="quiz-container" id="quizContainer">
                 <div class="quiz-header">
-                    <h1 class="quiz-title" id="quizTitle">Quiz Yükleniyor...</h1>
+                    <h1 class="quiz-title" id="quizTitle">🏳️ Bayrak Quiz</h1>
                     <div class="quiz-info">
                         <div>
                             <span id="questionProgress">Soru 1 / 10</span>
                         </div>
-                        <div class="timer" id="timer">05:00</div>
+                        <div class="timer" id="timer">00:30</div>
                     </div>
                     <div class="progress-bar-custom">
-                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        <div class="progress-fill" id="progressFill" style="width: 10%"></div>
                     </div>
                 </div>
                 
@@ -369,30 +376,26 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content result-modal">
                         <div class="modal-body">
-                            <h2 class="mb-4">🏆 Test Sonucu</h2>
+                            <h2 class="mb-4">🏆 Bayrak Quiz Sonucu</h2>
                             <div class="score-circle" id="scoreCircle">
                                 <div class="score-text" id="scoreText">0%</div>
                             </div>
-                            <!-- Top Row: Total Score and Time -->
-                            <div class="row mt-4 justify-content-center">
-                                <div class="col-md-5 col-sm-6">
+                            <div class="row mt-4">
+                                <div class="col-md-3">
                                     <h5>Toplam Puan</h5>
                                     <p class="fs-4" id="totalScore">0</p>
                                 </div>
-                                <div class="col-md-5 col-sm-6">
-                                    <h5>Süre</h5>
-                                    <p class="fs-4" id="timeTaken">0:00</p>
-                                </div>
-                            </div>
-                            <!-- Bottom Row: Correct and Wrong Answers -->
-                            <div class="row mt-3 justify-content-center">
-                                <div class="col-md-5 col-sm-6">
+                                <div class="col-md-3">
                                     <h5>Doğru Cevap</h5>
                                     <p class="fs-4 text-success" id="correctAnswers">0</p>
                                 </div>
-                                <div class="col-md-5 col-sm-6">
+                                <div class="col-md-3">
                                     <h5>Yanlış Cevap</h5>
                                     <p class="fs-4 text-danger" id="wrongAnswers">0</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5>Süre</h5>
+                                    <p class="fs-4" id="timeTaken">0:00</p>
                                 </div>
                             </div>
                             <div class="rating-container">
@@ -407,11 +410,14 @@
                                 <p class="rating-text">Değerlendirme yapmak için yıldızlara tıklayın</p>
                             </div>
                             <div class="mt-4">
+                                <button class="btn btn-nav me-2" onclick="window.location.reload()">
+                                    <i class="bi bi-arrow-repeat"></i> Tekrar Oyna
+                                </button>
                                 <button class="btn btn-nav me-2" onclick="window.location.href='quiz.html'">
-                                    <i class="bi bi-arrow-left"></i> Testlere Dön
+                                    Testlere Dön
                                 </button>
                                 <button class="btn btn-nav" onclick="window.location.href='leader_borad.html'">
-                                    <i class="bi bi-trophy"></i> Liderlik Tablosu
+                                    Liderlik Tablosu
                                 </button>
                             </div>
                         </div>
@@ -429,19 +435,20 @@
         let userAnswers = [];
         let startTime = null;
         let timerInterval = null;
-        let timeLimit = 300; // 5 dakika default
-
-        // URL'den quiz ID'sini al
-        const urlParams = new URLSearchParams(window.location.search);
-        const quizId = urlParams.get('quiz');
-
-        if (!quizId) {
-            showAlert('Quiz ID bulunamadı!', 'danger');
-            setTimeout(() => window.location.href = 'quiz.html', 2000);
-        }
+        let timeLimit = 300; // 5 dakika
+        let questionTimer = null;
 
         // Sayfa yüklendiğinde quiz'i yükle
         document.addEventListener('DOMContentLoaded', async function() {
+            // Giriş kontrolü
+            if (!TokenManager.isLoggedIn()) {
+                showAlert('Bu quiz\'i oynamak için giriş yapmalısınız!', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return;
+            }
+
             try {
                 await loadUserInfo();
                 await loadQuiz();
@@ -449,6 +456,9 @@
             } catch (error) {
                 console.error('Quiz yükleme hatası:', error);
                 showAlert('Quiz yüklenirken bir hata oluştu.', 'danger');
+                setTimeout(() => {
+                    window.location.href = 'quiz.html';
+                }, 3000);
             }
         });
 
@@ -463,10 +473,27 @@
 
         async function loadQuiz() {
             try {
-                currentQuiz = await QuizzesAPI.getQuiz(quizId);
-                timeLimit = currentQuiz.time_limit || 300;
+                // Flag quiz verilerini al
+                const flagQuizData = await FlagQuizAPI.startFlagQuiz();
                 
-                document.getElementById('quizTitle').textContent = currentQuiz.title;
+                // Normal quiz formatına dönüştür
+                currentQuiz = {
+                    id: 'flag_quiz',
+                    title: '🏳️ Bayrak Quiz',
+                    questions: flagQuizData.questions.map((q, index) => ({
+                        id: index + 1,
+                        question_text: 'Bu hangi ülkenin bayrağı?',
+                        flag_url: q.flag_url,
+                        options: q.options.map((option, optIndex) => ({
+                            id: optIndex + 1,
+                            option_text: option,
+                            is_correct: option === q.correct_answer
+                        }))
+                    })),
+                    time_limit: 600 // 10 dakika
+                };
+                
+                timeLimit = currentQuiz.time_limit;
                 
                 // Cevap dizisini başlat
                 userAnswers = new Array(currentQuiz.questions.length).fill(null);
@@ -489,6 +516,9 @@
                 <div class="question-card">
                     <div class="question-number">Soru ${index + 1} / ${currentQuiz.questions.length}</div>
                     <div class="question-text">${question.question_text}</div>
+                    <div class="mb-3 text-center">
+                        <img src="${question.flag_url}" alt="Bayrak" class="flag-image">
+                    </div>
                     <div class="options">
                         ${question.options.map((option, optionIndex) => `
                             <div class="option ${userAnswers[index] === option.id ? 'selected' : ''}" 
@@ -502,6 +532,31 @@
             
             updateNavigation();
             updateProgress();
+            
+            // Her soruda 30 saniye timer başlat
+            startQuestionTimer();
+        }
+
+        function startQuestionTimer() {
+            let timeLeft = 30;
+            
+            if (questionTimer) {
+                clearInterval(questionTimer);
+            }
+            
+            questionTimer = setInterval(() => {
+                timeLeft--;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(questionTimer);
+                    // Süre doldu, sonraki soruya geç
+                    if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+                        nextQuestion();
+                    } else {
+                        finishQuiz();
+                    }
+                }
+            }, 1000);
         }
 
         function selectOption(optionId, optionIndex) {
@@ -546,140 +601,124 @@
         function updateProgress() {
             const progress = ((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100;
             document.getElementById('progressFill').style.width = progress + '%';
-            document.getElementById('questionProgress').textContent = 
-                `Soru ${currentQuestionIndex + 1} / ${currentQuiz.questions.length}`;
+            document.getElementById('questionProgress').textContent = `Soru ${currentQuestionIndex + 1} / ${currentQuiz.questions.length}`;
         }
 
         function startTimer() {
-            let timeLeft = timeLimit;
-            const timerElement = document.getElementById('timer');
+            let remainingTime = timeLimit;
+            
+            function updateTimerDisplay() {
+                const minutes = Math.floor(remainingTime / 60);
+                const seconds = remainingTime % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            updateTimerDisplay();
             
             timerInterval = setInterval(() => {
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
+                remainingTime--;
+                updateTimerDisplay();
                 
-                timerElement.textContent = 
-                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                
-                // Son 60 saniyede warning class ekle
-                if (timeLeft <= 60) {
-                    timerElement.classList.add('warning');
-                }
-                
-                if (timeLeft <= 0) {
+                if (remainingTime <= 0) {
                     clearInterval(timerInterval);
                     finishQuiz();
-                    return;
                 }
-                
-                timeLeft--;
             }, 1000);
         }
 
         async function finishQuiz() {
-            clearInterval(timerInterval);
-            
-            const endTime = new Date();
-            const timeTaken = Math.floor((endTime - startTime) / 1000);
-            
-            // Cevapları hazırla
-            const answers = [];
-            userAnswers.forEach((selectedOptionId, questionIndex) => {
-                if (selectedOptionId) {
-                    answers.push({
-                        question_id: currentQuiz.questions[questionIndex].id,
-                        selected_option_id: selectedOptionId
-                    });
-                }
-            });
-            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            if (questionTimer) {
+                clearInterval(questionTimer);
+            }
+
             try {
-                const result = await QuizzesAPI.submitQuizAttempt(quizId, answers, timeTaken);
+                const endTime = new Date();
+                const timeTaken = Math.floor((endTime - startTime) / 1000);
+                
+                // Bayrak quiz formatına dönüştür
+                const answers = userAnswers.map((answerId, index) => {
+                    const question = currentQuiz.questions[index];
+                    const selectedOption = question.options.find(opt => opt.id === answerId);
+                    const correctOption = question.options.find(opt => opt.is_correct);
+                    
+                    return {
+                        question_id: index + 1,
+                        selected_answer: selectedOption ? selectedOption.option_text : null,
+                        correct_answer: correctOption.option_text,
+                        is_correct: selectedOption ? selectedOption.is_correct : false,
+                        time_taken: 30 // Her soru için sabit süre
+                    };
+                });
+
+                const result = await FlagQuizAPI.submitFlagQuiz(answers, timeTaken);
+                
                 showResult(result, timeTaken);
+                
             } catch (error) {
-                console.error('Quiz gönderme hatası:', error);
-                showAlert('Quiz sonucu kaydedilirken bir hata oluştu.', 'danger');
+                console.error('Quiz sonuçları gönderilirken hata:', error);
+                showAlert('Sonuçlar kaydedilirken bir hata oluştu!', 'danger');
             }
         }
-        
+
         function showResult(result, timeTaken) {
-            // Sonuç modalını doldur
-            document.getElementById('scoreText').textContent = Math.round(result.percentage) + '%';
+            const percentage = (result.correct_answers / result.total_questions) * 100;
+            
+            // Score circle güncelle
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.style.setProperty('--percentage', `${percentage * 3.6}deg`);
+            
+            document.getElementById('scoreText').textContent = Math.round(percentage) + '%';
             document.getElementById('totalScore').textContent = result.score;
             document.getElementById('correctAnswers').textContent = result.correct_answers;
             document.getElementById('wrongAnswers').textContent = result.total_questions - result.correct_answers;
-            document.getElementById('timeTaken').textContent = formatTime(timeTaken);
             
-            // Skor çemberini güncelle
-            const scoreCircle = document.getElementById('scoreCircle');
-            scoreCircle.style.setProperty('--percentage', (result.percentage * 3.6) + 'deg');
+            const minutes = Math.floor(timeTaken / 60);
+            const seconds = timeTaken % 60;
+            document.getElementById('timeTaken').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
             
-            // Modalı göster
-            const modal = new bootstrap.Modal(document.getElementById('resultModal'));
-            modal.show();
-            
-            // Yıldız değerlendirme sistemini başlat
-            setTimeout(() => {
-                initializeStarRating();
-            }, 500);
-        }
-
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds % 60;
-            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-        }
-
-        // Yıldız değerlendirme sistemi
-        let selectedRating = 0;
-        
-        function initializeStarRating() {
+            // Star rating event listeners
             const stars = document.querySelectorAll('.star-rating i');
-            const ratingText = document.querySelector('.rating-text');
+            let selectedRating = 0;
             
-            stars.forEach((star, index) => {
+            stars.forEach(star => {
                 star.addEventListener('click', function() {
                     selectedRating = parseInt(this.dataset.rating);
-                    updateStars(selectedRating);
-                    updateRatingText(selectedRating);
+                    updateStarDisplay(selectedRating);
                 });
                 
-                star.addEventListener('mouseenter', function() {
+                star.addEventListener('mouseover', function() {
                     const hoverRating = parseInt(this.dataset.rating);
-                    updateStars(hoverRating);
+                    updateStarDisplay(hoverRating);
                 });
             });
             
             document.querySelector('.star-rating').addEventListener('mouseleave', function() {
-                updateStars(selectedRating);
+                updateStarDisplay(selectedRating);
             });
-        }
-        
-        function updateStars(rating) {
-            const stars = document.querySelectorAll('.star-rating i');
-            stars.forEach((star, index) => {
-                if (index < rating) {
-                    star.className = 'bi bi-star-fill';
-                    star.style.color = '#ffc107';
-                } else {
-                    star.className = 'bi bi-star';
-                    star.style.color = '#6c757d';
-                }
-            });
-        }
-        
-        function updateRatingText(rating) {
-            const ratingText = document.querySelector('.rating-text');
-            const texts = [
-                'Değerlendirme yapmak için yıldızlara tıklayın',
-                'Çok kötü',
-                'Kötü',
-                'Orta',
-                'İyi',
-                'Mükemmel'
-            ];
-            ratingText.textContent = texts[rating];
+            
+            function updateStarDisplay(rating) {
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.className = 'bi bi-star-fill';
+                        star.style.color = '#ffc107';
+                    } else {
+                        star.className = 'bi bi-star';
+                        star.style.color = '#6c757d';
+                    }
+                });
+            }
+            
+            // Modal'ı göster
+            const modal = new bootstrap.Modal(document.getElementById('resultModal'));
+            modal.show();
+            
+            showAlert(`Bayrak quiz tamamlandı! ${result.correct_answers}/${result.total_questions} doğru cevap. ${result.score} puan kazandınız!`, 'success');
         }
     </script>
 </body>
-</html>
+</html> 

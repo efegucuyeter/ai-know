@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, and_
 from database import User, Category, Quiz, Question, QuestionOption, QuizAttempt, UserAnswer
 import schemas
-from auth import get_password_hash
+from auth import get_password_hash, verify_password
 from typing import List
 import math
 
@@ -64,6 +64,21 @@ def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
     db.refresh(user)
     return user
 
+def change_user_password(db: Session, user_id: int, current_password: str, new_password: str):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        return None
+    
+    # Mevcut şifreyi doğrula
+    if not verify_password(current_password, user.hashed_password):
+        return False
+    
+    # Yeni şifreyi hash'le ve güncelle
+    user.hashed_password = get_password_hash(new_password)
+    db.commit()
+    db.refresh(user)
+    return True
+
 # Category CRUD
 def get_categories(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Category).offset(skip).limit(limit).all()
@@ -77,6 +92,20 @@ def create_category(db: Session, category: schemas.CategoryCreate):
     db.commit()
     db.refresh(db_category)
     return db_category
+
+def get_categories_with_quiz_counts(db: Session, skip: int = 0, limit: int = 100):
+    """Her kategorinin quiz sayısını içeren kategori listesi döndürür"""
+    categories_with_counts = db.query(
+        Category.id,
+        Category.name,
+        Category.description,
+        Category.image_url,
+        func.count(Quiz.id).label('quiz_count')
+    ).outerjoin(Quiz, and_(Category.id == Quiz.category_id, Quiz.is_active == True))\
+     .group_by(Category.id, Category.name, Category.description, Category.image_url)\
+     .offset(skip).limit(limit).all()
+    
+    return categories_with_counts
 
 # Quiz CRUD
 def get_quizzes(db: Session, skip: int = 0, limit: int = 100, category_id: int = None):

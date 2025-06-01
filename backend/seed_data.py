@@ -10,13 +10,23 @@ def seed_database():
     try:
         # Kategoriler oluştur
         categories = [
-            {"name": "Coding", "description": "Programlama ve yazılım geliştirme", "image_url": "https://placehold.co/400x320/2563eb/ffffff?text=Coding"},
-            {"name": "Genel Kültür", "description": "Genel kültür ve bilgi yarışması", "image_url": "https://placehold.co/400x320/7c3aed/ffffff?text=Genel+Kültür"},
-            {"name": "Bayraklar", "description": "Dünya ülkelerinin bayrakları", "image_url": "https://placehold.co/400x320/dc2626/ffffff?text=Bayraklar"},
+            {"name": "Matematik", "description": "Matematik ve sayısal işlemler", "image_url": "https://placehold.co/400x320/2563eb/ffffff?text=Matematik"},
+            {"name": "Fen Bilgisi", "description": "Fen bilimleri ve doğa", "image_url": "https://placehold.co/400x320/059669/ffffff?text=Fen+Bilgisi"},
+            {"name": "Tarih", "description": "Türk ve dünya tarihi", "image_url": "https://placehold.co/400x320/7c2d12/ffffff?text=Tarih"},
+            {"name": "Coğrafya", "description": "Dünya coğrafyası ve ülkeler", "image_url": "https://placehold.co/400x320/ea580c/ffffff?text=Coğrafya"},
+            {"name": "Türkçe", "description": "Türk dili ve edebiyatı", "image_url": "https://placehold.co/400x320/dc2626/ffffff?text=Türkçe"},
             {"name": "İngilizce", "description": "İngilizce dil bilgisi ve kelimeler", "image_url": "https://placehold.co/400x320/059669/ffffff?text=İngilizce"},
+            {"name": "Coding", "description": "Programlama ve yazılım geliştirme", "image_url": "https://placehold.co/400x320/2563eb/ffffff?text=Coding"},
+            {"name": "Sanat", "description": "Sanat tarihi ve kültür", "image_url": "https://placehold.co/400x320/c026d3/ffffff?text=Sanat"},
+            {"name": "Bilim", "description": "Bilim ve teknoloji", "image_url": "https://placehold.co/400x320/7c3aed/ffffff?text=Bilim"},
+            {"name": "Hayvanlar", "description": "Hayvan bilgisi ve doğa", "image_url": "https://placehold.co/400x320/16a34a/ffffff?text=Hayvanlar"},
+            {"name": "Spor", "description": "Spor bilgisi ve olimpiyatlar", "image_url": "https://placehold.co/400x320/ea580c/ffffff?text=Spor"},
+            {"name": "Teknoloji", "description": "Teknoloji ve yenilikler", "image_url": "https://placehold.co/400x320/374151/ffffff?text=Teknoloji"},
             {"name": "Almanca", "description": "Almanca dil bilgisi ve kelimeler", "image_url": "https://placehold.co/400x320/ea580c/ffffff?text=Almanca"},
             {"name": "Dünya Tarihi", "description": "Dünya tarihinden önemli olaylar", "image_url": "https://placehold.co/400x320/7c2d12/ffffff?text=Dünya+Tarihi"},
             {"name": "Futbol", "description": "Futbol bilgisi ve spor", "image_url": "https://placehold.co/400x320/16a34a/ffffff?text=Futbol"},
+            {"name": "Genel Kültür", "description": "Genel kültür ve bilgi yarışması", "image_url": "https://placehold.co/400x320/7c3aed/ffffff?text=Genel+Kültür"},
+            {"name": "Bayraklar", "description": "Dünya ülkelerinin bayrakları", "image_url": "https://placehold.co/400x320/dc2626/ffffff?text=Bayraklar"},
             {"name": "Müzik", "description": "Müzik bilgisi ve sanatçılar", "image_url": "https://placehold.co/400x320/c026d3/ffffff?text=Müzik"}
         ]
         
