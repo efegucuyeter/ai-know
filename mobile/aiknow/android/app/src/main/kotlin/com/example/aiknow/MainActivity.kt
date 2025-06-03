@@ -1,0 +1,5 @@
+package com.example.aiknow
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity()
