@@ -23,10 +23,10 @@ class _HomeScreenState extends State<HomeScreen> {
         context.go('/test');
         break;
       case 2:
-        context.go('/leaders');
+        context.go('/create');
         break;
       case 3:
-        context.go('/profile');
+        context.go('/solve');
         break;
     }
   }
@@ -144,7 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(icon: Icon(Icons.quiz), label: 'Test'),
-            BottomNavigationBarItem(icon: Icon(Icons.leaderboard), label: 'Liderlik'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.leaderboard), label: 'Liderlik'),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
           ],
         ),
@@ -198,7 +199,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(20),
@@ -278,7 +280,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
