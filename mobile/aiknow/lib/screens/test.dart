@@ -18,7 +18,7 @@ class TestScreen extends StatelessWidget {
           ),
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => context.go('/'),
+            onPressed: () => context.go('/home'),
           ),
         ),
         title: const Text(
@@ -45,14 +45,14 @@ class TestScreen extends StatelessWidget {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: const AssetImage('lib/assets/wp.png'),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.2),
-              BlendMode.darken,
-            ),
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.center,
+            radius: 1.0,
+            colors: [
+              Color(0xFF578FCA),
+              Color(0xFF94BBE9),
+            ],
           ),
         ),
         child: SafeArea(
@@ -75,6 +75,12 @@ class TestScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.go('/create'),
+        icon: const Icon(Icons.add),
+        label: const Text('Test Oluştur'),
+        backgroundColor: AppColors.primaryColor,
       ),
     );
   }
@@ -125,9 +131,10 @@ class TestScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Row(
@@ -152,7 +159,7 @@ class TestScreen extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.white.withOpacity(0.2),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
@@ -188,15 +195,14 @@ class TestScreen extends StatelessWidget {
               style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white
-              ),
+                  color: Colors.white),
             ),
             TextButton(
               onPressed: () {},
               child: Text(
                 'Tümünü Gör',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withOpacity(0.7),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -254,15 +260,14 @@ class TestScreen extends StatelessWidget {
               style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white
-              ),
+                  color: Colors.white),
             ),
             TextButton(
               onPressed: () {},
               child: Text(
                 'Tümünü Gör',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withOpacity(0.7),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -344,7 +349,7 @@ class _CategoryItem extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withOpacity(0.5),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -367,14 +372,15 @@ class _CategoryItem extends StatelessWidget {
                   testCount,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withOpacity(0.7),
                   ),
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: const Row(
@@ -438,7 +444,7 @@ class _QuizItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.5),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -453,7 +459,9 @@ class _QuizItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
-          onTap: () {},
+          onTap: () {
+            context.go('/solve');
+          },
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -475,7 +483,8 @@ class _QuizItem extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: _getDifficultyColor().withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CreateTestScreen extends StatefulWidget {
   const CreateTestScreen({Key? key}) : super(key: key);
@@ -34,9 +35,23 @@ class _CreateTestScreenState extends State<CreateTestScreen>
   List<AiQuestion> _aiGeneratedQuestions = [];
 
   final List<String> _categories = [
-    'Matematik', 'Fen Bilgisi', 'Tarih', 'Coğrafya', 'Türkçe', 'İngilizce',
-    'Coding', 'Sanat', 'Bilim', 'Hayvanlar', 'Spor', 'Teknoloji',
-    'Almanca', 'Dünya Tarihi', 'Futbol', 'Genel Kültür', 'Müzik'
+    'Matematik',
+    'Fen Bilgisi',
+    'Tarih',
+    'Coğrafya',
+    'Türkçe',
+    'İngilizce',
+    'Coding',
+    'Sanat',
+    'Bilim',
+    'Hayvanlar',
+    'Spor',
+    'Teknoloji',
+    'Almanca',
+    'Dünya Tarihi',
+    'Futbol',
+    'Genel Kültür',
+    'Müzik'
   ];
 
   final List<String> _difficulties = ['Kolay', 'Orta', 'Zor'];
@@ -108,7 +123,8 @@ class _CreateTestScreenState extends State<CreateTestScreen>
       setState(() {
         _aiGeneratedQuestions = [
           AiQuestion(
-            text: 'Flutter\'da StatefulWidget ve StatelessWidget arasındaki temel fark nedir?',
+            text:
+                'Flutter\'da StatefulWidget ve StatelessWidget arasındaki temel fark nedir?',
             options: [
               'StatefulWidget verileri değiştirebilir',
               'StatelessWidget daha hızlıdır',
@@ -162,9 +178,10 @@ class _CreateTestScreenState extends State<CreateTestScreen>
       return;
     }
 
-    final validQuestions = _questions.where((q) =>
-    q.text.isNotEmpty && q.options.every((opt) => opt.isNotEmpty)
-    ).toList();
+    final validQuestions = _questions
+        .where((q) =>
+            q.text.isNotEmpty && q.options.every((opt) => opt.isNotEmpty))
+        .toList();
 
     if (validQuestions.isEmpty) {
       _showSnackBar('En az bir geçerli soru eklemelisiniz!', Colors.orange);
@@ -230,7 +247,7 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                 child: Container(
                   margin: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.95),
+                    color: Colors.white.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -269,7 +286,7 @@ class _CreateTestScreenState extends State<CreateTestScreen>
       child: Align(
         alignment: Alignment.topLeft,
         child: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.go('/test'),
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           iconSize: 28,
           padding: const EdgeInsets.all(8),
@@ -370,7 +387,7 @@ class _CreateTestScreenState extends State<CreateTestScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionHeader(
-            '🤖 AI ile Soru Oluştur',
+            'AI ile Soru Oluştur',
             'Yapay zeka ile otomatik olarak kaliteli sorular oluşturun',
           ),
           const SizedBox(height: 20),
@@ -401,7 +418,8 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                   'Kategori',
                   _categories,
                   _aiCategoryController.text,
-                      (value) => setState(() => _aiCategoryController.text = value ?? ''),
+                  (value) =>
+                      setState(() => _aiCategoryController.text = value ?? ''),
                 ),
               ),
               const SizedBox(width: 16),
@@ -410,7 +428,7 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                   'Dil',
                   _languages,
                   _selectedAiLanguage,
-                      (value) => setState(() => _selectedAiLanguage = value ?? ''),
+                  (value) => setState(() => _selectedAiLanguage = value ?? ''),
                 ),
               ),
             ],
@@ -423,7 +441,8 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                   'Zorluk Seviyesi',
                   _difficulties,
                   _selectedAiDifficulty,
-                      (value) => setState(() => _selectedAiDifficulty = value ?? ''),
+                  (value) =>
+                      setState(() => _selectedAiDifficulty = value ?? ''),
                 ),
               ),
               const SizedBox(width: 16),
@@ -457,34 +476,34 @@ class _CreateTestScreenState extends State<CreateTestScreen>
               ),
               child: _isAiGenerating
                   ? const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'AI Soruları Oluşturuyor...',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ],
-              )
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'AI Soruları Oluşturuyor...',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ],
+                    )
                   : const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.auto_awesome, color: Colors.white),
-                  SizedBox(width: 8),
-                  Text(
-                    'AI ile Soru Oluştur',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ],
-              ),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.auto_awesome, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text(
+                          'AI ile Soru Oluştur',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ],
+                    ),
             ),
           ),
         ],
@@ -518,9 +537,10 @@ class _CreateTestScreenState extends State<CreateTestScreen>
               margin: const EdgeInsets.only(bottom: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF3674B5).withOpacity(0.2)),
+                border:
+                    Border.all(color: const Color(0xFF3674B5).withOpacity(0.2)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -541,7 +561,7 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                       decoration: BoxDecoration(
                         color: isCorrect
                             ? Colors.green.withOpacity(0.2)
-                            : Colors.white.withOpacity(0.7),
+                            : Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: isCorrect
@@ -554,19 +574,24 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                           Text(
                             String.fromCharCode(65 + optIndex) + ') ',
                             style: TextStyle(
-                              fontWeight: isCorrect ? FontWeight.bold : FontWeight.normal,
+                              fontWeight: isCorrect
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
                           ),
                           Expanded(
                             child: Text(
                               question.options[optIndex],
                               style: TextStyle(
-                                fontWeight: isCorrect ? FontWeight.bold : FontWeight.normal,
+                                fontWeight: isCorrect
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                               ),
                             ),
                           ),
                           if (isCorrect)
-                            const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                            const Icon(Icons.check_circle,
+                                color: Colors.green, size: 20),
                         ],
                       ),
                     );
@@ -604,7 +629,8 @@ class _CreateTestScreenState extends State<CreateTestScreen>
               const SizedBox(width: 12),
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () => setState(() => _aiGeneratedQuestions.clear()),
+                  onPressed: () =>
+                      setState(() => _aiGeneratedQuestions.clear()),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -672,7 +698,7 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                   'Kategori',
                   _categories,
                   _selectedCategory,
-                      (value) => setState(() => _selectedCategory = value ?? ''),
+                  (value) => setState(() => _selectedCategory = value ?? ''),
                 ),
               ),
             ],
@@ -685,7 +711,7 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                   'Zorluk Seviyesi',
                   _difficulties,
                   _selectedDifficulty,
-                      (value) => setState(() => _selectedDifficulty = value ?? ''),
+                  (value) => setState(() => _selectedDifficulty = value ?? ''),
                 ),
               ),
               const SizedBox(width: 16),
@@ -730,7 +756,8 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                 onPressed: _addEmptyQuestion,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -767,7 +794,6 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-
                         ),
                       ),
                     ],
@@ -801,7 +827,7 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                 'Renk Seçin',
                 _bannerColors.values.toList(),
                 _bannerColors[_selectedBannerColor] ?? 'Mavi',
-                    (value) {
+                (value) {
                   final selectedKey = _bannerColors.entries
                       .firstWhere((entry) => entry.value == value)
                       .key;
@@ -832,22 +858,22 @@ class _CreateTestScreenState extends State<CreateTestScreen>
           child: Center(
             child: _bannerUrlController.text.isNotEmpty
                 ? const Text(
-              'URL Görsel Önizleme',
-              style: TextStyle(
-                color: Colors.black54,
-                fontWeight: FontWeight.bold,
-              ),
-            )
+                    'URL Görsel Önizleme',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
                 : Text(
-              _titleController.text.isNotEmpty
-                  ? _titleController.text
-                  : 'Banner Önizleme',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
+                    _titleController.text.isNotEmpty
+                        ? _titleController.text
+                        : 'Banner Önizleme',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
           ),
         ),
       ],
@@ -901,8 +927,8 @@ class _CreateTestScreenState extends State<CreateTestScreen>
           SizedBox(
             width: 120,
             child: TextField(
-              onChanged: (value) => setState(() =>
-              question.points = int.tryParse(value) ?? 10),
+              onChanged: (value) =>
+                  setState(() => question.points = int.tryParse(value) ?? 10),
               decoration: const InputDecoration(
                 labelText: 'Puan',
                 border: OutlineInputBorder(),
@@ -910,7 +936,8 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                 fillColor: Colors.white,
               ),
               keyboardType: TextInputType.number,
-              controller: TextEditingController(text: question.points.toString()),
+              controller:
+                  TextEditingController(text: question.points.toString()),
             ),
           ),
           const SizedBox(height: 16),
@@ -930,21 +957,23 @@ class _CreateTestScreenState extends State<CreateTestScreen>
                   Radio<int>(
                     value: optIndex,
                     groupValue: question.correctAnswerIndex,
-                    onChanged: (value) => setState(() =>
-                    question.correctAnswerIndex = value ?? 0),
+                    onChanged: (value) => setState(
+                        () => question.correctAnswerIndex = value ?? 0),
                     activeColor: const Color(0xFF3674B5),
                   ),
                   Expanded(
                     child: TextField(
-                      onChanged: (value) => setState(() =>
-                      question.options[optIndex] = value),
+                      onChanged: (value) =>
+                          setState(() => question.options[optIndex] = value),
                       decoration: InputDecoration(
-                        labelText: 'Seçenek ${String.fromCharCode(65 + optIndex)}',
+                        labelText:
+                            'Seçenek ${String.fromCharCode(65 + optIndex)}',
                         border: const OutlineInputBorder(),
                         filled: true,
                         fillColor: Colors.white,
                       ),
-                      controller: TextEditingController(text: question.options[optIndex]),
+                      controller: TextEditingController(
+                          text: question.options[optIndex]),
                     ),
                   ),
                 ],
@@ -988,7 +1017,7 @@ class _CreateTestScreenState extends State<CreateTestScreen>
           Text(
             subtitle,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withOpacity(0.5),
               fontSize: 14,
             ),
             textAlign: TextAlign.center,
@@ -999,12 +1028,12 @@ class _CreateTestScreenState extends State<CreateTestScreen>
   }
 
   Widget _buildTextField(
-      String label,
-      TextEditingController controller, {
-        String? hintText,
-        TextInputType? keyboardType,
-        int maxLines = 1,
-      }) {
+    String label,
+    TextEditingController controller, {
+    String? hintText,
+    TextInputType? keyboardType,
+    int maxLines = 1,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1024,7 +1053,8 @@ class _CreateTestScreenState extends State<CreateTestScreen>
             hintText: hintText,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: const Color(0xFF3674B5).withOpacity(0.2)),
+              borderSide:
+                  BorderSide(color: const Color(0xFF3674B5).withOpacity(0.2)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -1032,7 +1062,8 @@ class _CreateTestScreenState extends State<CreateTestScreen>
             ),
             filled: true,
             fillColor: const Color(0xFF3674B5).withOpacity(0.1),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             isDense: true,
           ),
         ),
@@ -1041,11 +1072,11 @@ class _CreateTestScreenState extends State<CreateTestScreen>
   }
 
   Widget _buildDropdown(
-      String label,
-      List<String> items,
-      String selectedValue,
-      Function(String?) onChanged,
-      ) {
+    String label,
+    List<String> items,
+    String selectedValue,
+    Function(String?) onChanged,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1063,7 +1094,8 @@ class _CreateTestScreenState extends State<CreateTestScreen>
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: const Color(0xFF3674B5).withOpacity(0.2)),
+              borderSide:
+                  BorderSide(color: const Color(0xFF3674B5).withOpacity(0.2)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -1071,7 +1103,8 @@ class _CreateTestScreenState extends State<CreateTestScreen>
             ),
             filled: true,
             fillColor: const Color(0xFF3674B5).withOpacity(0.1),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             isDense: true,
           ),
           items: items.map((String item) {

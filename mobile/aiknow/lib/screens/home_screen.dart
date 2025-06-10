@@ -23,10 +23,10 @@ class _HomeScreenState extends State<HomeScreen> {
         context.go('/test');
         break;
       case 2:
-        context.go('/create');
+        context.go('/leaders');
         break;
       case 3:
-        context.go('/solve');
+        context.go('/profile');
         break;
     }
   }
@@ -63,14 +63,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: const AssetImage('lib/assets/wp.png'),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.2),
-              BlendMode.darken,
-            ),
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.center,
+            radius: 1.0,
+            colors: [
+              Color(0xFF578FCA),
+              Color(0xFF94BBE9),
+            ],
           ),
         ),
         child: SafeArea(
@@ -202,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Row(
@@ -255,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withOpacity(0.6),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -328,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withOpacity(0.6),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(

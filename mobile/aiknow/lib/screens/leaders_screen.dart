@@ -69,8 +69,19 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     },
   ];
 
-  final List<String> _categories = ['Genel', 'Matematik', 'Bilim', 'Sanat', 'Hayvanlar'];
-  final List<String> _timePeriods = ['Günlük', 'Haftalık', 'Aylık', 'Tüm Zamanlar'];
+  final List<String> _categories = [
+    'Genel',
+    'Matematik',
+    'Bilim',
+    'Sanat',
+    'Hayvanlar'
+  ];
+  final List<String> _timePeriods = [
+    'Günlük',
+    'Haftalık',
+    'Aylık',
+    'Tüm Zamanlar'
+  ];
 
   String _selectedCategory = 'Genel';
   String _selectedTimePeriod = 'Haftalık';
@@ -88,7 +99,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           ),
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => context.go('/'),
+            onPressed: () => context.go('/home'),
           ),
         ),
         title: const Text(
@@ -115,14 +126,14 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: const AssetImage('lib/assets/wp.png'),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.2),
-              BlendMode.darken,
-            ),
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.center,
+            radius: 1.0,
+            colors: [
+              Color(0xFF578FCA),
+              Color(0xFF94BBE9),
+            ],
           ),
         ),
         child: SafeArea(
@@ -193,9 +204,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Row(
@@ -249,7 +261,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withOpacity(0.6),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -283,14 +295,16 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppColors.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: DropdownButton<String>(
                   value: _selectedCategory,
-                  icon: const Icon(Icons.arrow_drop_down, color: AppColors.primaryColor),
+                  icon: const Icon(Icons.arrow_drop_down,
+                      color: AppColors.primaryColor),
                   underline: Container(),
                   style: TextStyle(
                     color: AppColors.primaryColor,
@@ -299,10 +313,12 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   onChanged: (String? newValue) {
                     setState(() => _selectedCategory = newValue!);
                   },
-                  items: _categories.map((value) => DropdownMenuItem(
-                    value: value,
-                    child: Text(value),
-                  )).toList(),
+                  items: _categories
+                      .map((value) => DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          ))
+                      .toList(),
                 ),
               ),
             ],
@@ -320,14 +336,16 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppColors.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: DropdownButton<String>(
                   value: _selectedTimePeriod,
-                  icon: const Icon(Icons.arrow_drop_down, color: AppColors.primaryColor),
+                  icon: const Icon(Icons.arrow_drop_down,
+                      color: AppColors.primaryColor),
                   underline: Container(),
                   style: TextStyle(
                     color: AppColors.primaryColor,
@@ -336,10 +354,12 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   onChanged: (String? newValue) {
                     setState(() => _selectedTimePeriod = newValue!);
                   },
-                  items: _timePeriods.map((value) => DropdownMenuItem(
-                    value: value,
-                    child: Text(value),
-                  )).toList(),
+                  items: _timePeriods
+                      .map((value) => DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          ))
+                      .toList(),
                 ),
               ),
             ],
@@ -380,7 +400,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   Widget _buildTopUserItem(Map<String, dynamic> user, int position) {
     final double size = position == 1 ? 100.0 : 80.0;
     final Color borderColor = _getRankColor(position);
-    final IconData crownIcon = position == 1 ? Icons.workspace_premium : Icons.emoji_events;
+    final IconData crownIcon =
+        position == 1 ? Icons.workspace_premium : Icons.emoji_events;
 
     return Column(
       children: [
@@ -409,7 +430,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
             ),
             if (position <= 3)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: borderColor,
                   borderRadius: BorderRadius.circular(12),
@@ -456,7 +478,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           margin: const EdgeInsets.only(top: 4),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withOpacity(0.6),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -477,7 +499,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withOpacity(0.6),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -537,7 +559,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
       decoration: BoxDecoration(
         color: user['isCurrentUser']
             ? AppColors.primaryColor.withOpacity(0.1)
-            : Colors.white,
+            : Colors.white.withOpacity(0.6),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -581,7 +603,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         title: Text(
           user['name'],
           style: TextStyle(
-            fontWeight: user['isCurrentUser'] ? FontWeight.bold : FontWeight.w500,
+            fontWeight:
+                user['isCurrentUser'] ? FontWeight.bold : FontWeight.w500,
             color: Colors.black87,
           ),
         ),
@@ -614,10 +637,14 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   Color _getRankColor(int rank) {
     switch (rank) {
-      case 1: return Colors.amber;
-      case 2: return Colors.grey.shade400;
-      case 3: return Colors.brown.shade300;
-      default: return AppColors.secondaryColor;
+      case 1:
+        return Colors.amber;
+      case 2:
+        return Colors.grey.shade400;
+      case 3:
+        return Colors.brown.shade300;
+      default:
+        return AppColors.secondaryColor;
     }
   }
 }

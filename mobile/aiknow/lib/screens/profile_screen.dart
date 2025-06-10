@@ -120,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => context.go('/'),
+            onPressed: () => context.go('/home'),
           ),
         ),
         title: const Text(
@@ -147,14 +147,14 @@ class _ProfileScreenState extends State<ProfileScreen>
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: const AssetImage('lib/assets/wp.png'),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.2),
-              BlendMode.darken,
-            ),
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.center,
+            radius: 1.0,
+            colors: [
+              Color(0xFF578FCA),
+              Color(0xFF94BBE9),
+            ],
           ),
         ),
         child: SafeArea(
@@ -255,9 +255,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                 _buildInfoRow(Icons.calendar_today, 'Katılım: 30 Haz 2023'),
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Row(
@@ -299,7 +300,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                 CircularProgressIndicator(
                   value: 0.75,
                   backgroundColor: Colors.grey.shade200,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.secondaryColor),
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(AppColors.secondaryColor),
                   strokeWidth: 6,
                 ),
                 Text(
@@ -345,7 +347,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withOpacity(0.5),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -426,7 +428,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withOpacity(0.5),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -474,7 +476,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                 _buildActivitiesTab(),
                 _buildAchievementsTab(),
                 _buildFavoritesTab(),
-                _buildPersonalInfoTab(),
+                SingleChildScrollView(
+                  child: _buildPersonalInfoTab(),
+                ),
               ],
             ),
           ),
@@ -504,7 +508,8 @@ class _ProfileScreenState extends State<ProfileScreen>
             ],
           ),
           child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             leading: Container(
               width: 45,
               height: 45,
@@ -587,7 +592,8 @@ class _ProfileScreenState extends State<ProfileScreen>
             ],
           ),
           child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             leading: Container(
               width: 50,
               height: 50,
@@ -656,7 +662,8 @@ class _ProfileScreenState extends State<ProfileScreen>
             ],
           ),
           child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             leading: Container(
               width: 45,
               height: 45,

@@ -22,8 +22,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - lib/assets/  # Asset klasörünüz
-    - lib/assets/wp.png  # Özel olarak belirtilen arkaplan resmi
+    - lib/assets/  # Asset klasörünüz  # Özel olarak belirtilen arkaplan resmi
 
   # iOS için özel ayarlar (isteğe bağlı)
   module:

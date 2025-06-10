@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:go_router/go_router.dart';
 
 class SolveScreen extends StatefulWidget {
   const SolveScreen({Key? key}) : super(key: key);
@@ -10,14 +11,14 @@ class SolveScreen extends StatefulWidget {
 
 class _SolveScreenState extends State<SolveScreen>
     with TickerProviderStateMixin {
-
   // Mock Quiz Data
   final String _quizTitle = "Flutter Temel Bilgileri";
   final int _timeLimit = 300; // 5 dakika
   final List<QuizQuestion> _questions = [
     QuizQuestion(
       id: 1,
-      questionText: "Flutter'da StatefulWidget ve StatelessWidget arasındaki temel fark nedir?",
+      questionText:
+          "Flutter'da StatefulWidget ve StatelessWidget arasındaki temel fark nedir?",
       options: [
         "StatefulWidget verileri değiştirebilir",
         "StatelessWidget daha hızlıdır",
@@ -41,25 +42,17 @@ class _SolveScreenState extends State<SolveScreen>
     ),
     QuizQuestion(
       id: 3,
-      questionText: "Flutter'da hangi widget kullanarak scrollable liste oluşturabiliriz?",
-      options: [
-        "Container",
-        "ListView",
-        "Scaffold",
-        "AppBar"
-      ],
+      questionText:
+          "Flutter'da hangi widget kullanarak scrollable liste oluşturabiliriz?",
+      options: ["Container", "ListView", "Scaffold", "AppBar"],
       correctAnswerIndex: 1,
       points: 10,
     ),
     QuizQuestion(
       id: 4,
-      questionText: "Flutter'da Material Design bileşenleri hangi widget ile kullanılır?",
-      options: [
-        "CupertinoApp",
-        "WidgetApp",
-        "MaterialApp",
-        "BasicApp"
-      ],
+      questionText:
+          "Flutter'da Material Design bileşenleri hangi widget ile kullanılır?",
+      options: ["CupertinoApp", "WidgetApp", "MaterialApp", "BasicApp"],
       correctAnswerIndex: 2,
       points: 10,
     ),
@@ -89,10 +82,22 @@ class _SolveScreenState extends State<SolveScreen>
   @override
   void initState() {
     super.initState();
-    _timeLeft = _timeLimit;
     _userAnswers = List.filled(_questions.length, null);
-    _startTime = DateTime.now();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showReadyDialog();
+    });
+  }
 
+  @override
+  void dispose() {
+    _timer.cancel();
+    _progressController.dispose();
+    super.dispose();
+  }
+
+  void _startQuiz() {
+    _timeLeft = _timeLimit;
+    _startTime = DateTime.now();
     _progressController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -104,16 +109,49 @@ class _SolveScreenState extends State<SolveScreen>
       parent: _progressController,
       curve: Curves.easeInOut,
     ));
-
     _startTimer();
     _updateProgress();
   }
 
-  @override
-  void dispose() {
-    _timer.cancel();
-    _progressController.dispose();
-    super.dispose();
+  void _showReadyDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Test Başlıyor!',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        content: const Text(
+          'Soruları oku, cevabını seç, geç. Süre sınırı var, hazırsan başla! Başarılar!',
+          style: TextStyle(fontSize: 18),
+          textAlign: TextAlign.center,
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 32, vertical: 28),
+        insetPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 120),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              context.go('/test');
+            },
+            child: const Text('Hayır'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF3674B5),
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              _startQuiz();
+            },
+            child: const Text('Evet'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _startTimer() {
@@ -228,7 +266,7 @@ class _SolveScreenState extends State<SolveScreen>
                 child: Container(
                   margin: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.95),
+                    color: Colors.white.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
@@ -263,7 +301,7 @@ class _SolveScreenState extends State<SolveScreen>
         alignment: Alignment.topLeft,
         child: IconButton(
           onPressed: () {
-            _showExitConfirmation();
+            context.go('/test');
           },
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           iconSize: 28,
@@ -318,7 +356,8 @@ class _SolveScreenState extends State<SolveScreen>
                   : Colors.red.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: _timeLeft <= 60 ? Colors.red : Colors.red.withOpacity(0.3),
+                color:
+                    _timeLeft <= 60 ? Colors.red : Colors.red.withOpacity(0.3),
               ),
             ),
             child: Row(
@@ -355,7 +394,8 @@ class _SolveScreenState extends State<SolveScreen>
         children: [
           _buildInfoItem('Toplam Soru', '${_questions.length}'),
           _buildInfoItem('Süre', _formatTime(_timeLimit)),
-          _buildInfoItem('Tamamlanan', '${_userAnswers.where((a) => a != null).length}'),
+          _buildInfoItem(
+              'Tamamlanan', '${_userAnswers.where((a) => a != null).length}'),
         ],
       ),
     );
@@ -402,7 +442,8 @@ class _SolveScreenState extends State<SolveScreen>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: const Color(0xFF3674B5),
                   borderRadius: BorderRadius.circular(20),
@@ -469,8 +510,9 @@ class _SolveScreenState extends State<SolveScreen>
             child: Column(
               children: List.generate(
                 question.options.length,
-                    (index) {
-                  final isSelected = _userAnswers[_currentQuestionIndex] == index;
+                (index) {
+                  final isSelected =
+                      _userAnswers[_currentQuestionIndex] == index;
 
                   return Container(
                     width: double.infinity,
@@ -484,10 +526,14 @@ class _SolveScreenState extends State<SolveScreen>
                         decoration: BoxDecoration(
                           gradient: isSelected
                               ? const LinearGradient(
-                            colors: [Color(0xFF3674B5), Color(0xFF2c5d95)],
-                          )
+                                  colors: [
+                                    Color(0xFF3674B5),
+                                    Color(0xFF2c5d95)
+                                  ],
+                                )
                               : null,
-                          color: isSelected ? null : Colors.white.withOpacity(0.9),
+                          color:
+                              isSelected ? null : Colors.white.withOpacity(0.6),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: isSelected
@@ -495,19 +541,22 @@ class _SolveScreenState extends State<SolveScreen>
                                 : const Color(0xFF3674B5).withOpacity(0.2),
                             width: 2,
                           ),
-                          boxShadow: isSelected ? [
-                            BoxShadow(
-                              color: const Color(0xFF3674B5).withOpacity(0.3),
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
-                            ),
-                          ] : [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 2,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: const Color(0xFF3674B5)
+                                        .withOpacity(0.3),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ]
+                              : [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 2,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
                         ),
                         child: Row(
                           children: [
@@ -617,7 +666,7 @@ class _SolveScreenState extends State<SolveScreen>
           Row(
             children: List.generate(
               _questions.length,
-                  (index) => Container(
+              (index) => Container(
                 margin: const EdgeInsets.symmetric(horizontal: 2),
                 width: 8,
                 height: 8,
@@ -626,8 +675,8 @@ class _SolveScreenState extends State<SolveScreen>
                   color: _userAnswers[index] != null
                       ? const Color(0xFF28a745)
                       : index == _currentQuestionIndex
-                      ? const Color(0xFF3674B5)
-                      : Colors.grey[300],
+                          ? const Color(0xFF3674B5)
+                          : Colors.grey[300],
                   border: index == _currentQuestionIndex
                       ? Border.all(color: Colors.white, width: 1.5)
                       : null,
@@ -681,17 +730,17 @@ class _SolveScreenState extends State<SolveScreen>
   }
 
   Widget _buildResultModal(
-      int correctAnswers,
-      int wrongAnswers,
-      double percentage,
-      int timeTaken,
-      ) {
+    int correctAnswers,
+    int wrongAnswers,
+    double percentage,
+    int timeTaken,
+  ) {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
         padding: const EdgeInsets.all(30),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.95),
+          color: Colors.white.withOpacity(0.7),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -738,16 +787,17 @@ class _SolveScreenState extends State<SolveScreen>
                   colors: percentage >= 70
                       ? [const Color(0xFF28a745), const Color(0xFF20c997)]
                       : percentage >= 50
-                      ? [Colors.orange, Colors.amber]
-                      : [Colors.red, Colors.redAccent],
+                          ? [Colors.orange, Colors.amber]
+                          : [Colors.red, Colors.redAccent],
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: (percentage >= 70
-                        ? const Color(0xFF28a745)
-                        : percentage >= 50
-                        ? Colors.orange
-                        : Colors.red).withOpacity(0.3),
+                            ? const Color(0xFF28a745)
+                            : percentage >= 50
+                                ? Colors.orange
+                                : Colors.red)
+                        .withOpacity(0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   ),
@@ -766,7 +816,11 @@ class _SolveScreenState extends State<SolveScreen>
                       ),
                     ),
                     Text(
-                      percentage >= 70 ? 'Harika!' : percentage >= 50 ? 'İyi!' : 'Daha İyi Olabilir',
+                      percentage >= 70
+                          ? 'Harika!'
+                          : percentage >= 50
+                              ? 'İyi!'
+                              : 'Daha İyi Olabilir',
                       style: const TextStyle(
                         fontSize: 10,
                         color: Colors.white,
@@ -784,15 +838,18 @@ class _SolveScreenState extends State<SolveScreen>
             Row(
               children: [
                 Expanded(
-                  child: _buildResultItem('Doğru', '$correctAnswers', Colors.green),
+                  child: _buildResultItem(
+                      'Doğru', '$correctAnswers', Colors.green),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _buildResultItem('Yanlış', '$wrongAnswers', Colors.red),
+                  child:
+                      _buildResultItem('Yanlış', '$wrongAnswers', Colors.red),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _buildResultItem('Süre', _formatTime(timeTaken), Colors.blue),
+                  child: _buildResultItem(
+                      'Süre', _formatTime(timeTaken), Colors.blue),
                 ),
               ],
             ),
@@ -808,7 +865,8 @@ class _SolveScreenState extends State<SolveScreen>
                       Navigator.of(context).pop(); // Close modal
                       Navigator.of(context).pop(); // Go back to quiz list
                     },
-                    icon: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+                    icon: const Icon(Icons.arrow_back,
+                        color: Colors.white, size: 18),
                     label: const Text(
                       'Testlere Dön',
                       style: TextStyle(
@@ -834,12 +892,14 @@ class _SolveScreenState extends State<SolveScreen>
                       // Navigate to leaderboard
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Liderlik tablosuna yönlendiriliyor...'),
+                          content:
+                              Text('Liderlik tablosuna yönlendiriliyor...'),
                           backgroundColor: Colors.green,
                         ),
                       );
                     },
-                    icon: const Icon(Icons.leaderboard, color: Color(0xFF3674B5), size: 18),
+                    icon: const Icon(Icons.leaderboard,
+                        color: Color(0xFF3674B5), size: 18),
                     label: const Text(
                       'Liderlik',
                       style: TextStyle(
@@ -912,7 +972,7 @@ class _SolveScreenState extends State<SolveScreen>
         ),
         content: const Text(
           'Quiz\'den çıkmak istediğinize emin misiniz? '
-              'İlerlemeniz kaybedilecek.',
+          'İlerlemeniz kaybedilecek.',
         ),
         actions: [
           TextButton(
